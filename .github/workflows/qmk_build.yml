@@ -10,7 +10,7 @@ jobs:
       matrix:
 # List of keymap json files to build
         file:
-        - username.json
+        - bastardkb_skeletyl_keymap.json
 # End of json file list
 
     steps:
