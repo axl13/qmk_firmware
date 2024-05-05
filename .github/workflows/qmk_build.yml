@@ -1,26 +1,26 @@
 name: Build my QMK configuration
 
 on:
+  pull_request:
   push:
     branches:
-      - master
-  pull_request: {}
+      - main
+      - 'releases/*'
 
 jobs:
-  build-qmk:
+  test:
+    name: Action Test
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v1
-      - uses: d3adb5/build-qmk-fw@v1
+      - name: Build Firmware
+        uses: ./
         with:
-          keyboard: bastardkb/skeletyl
-          keymap: defauld
-          controller: helios
-          local-keymap-path: keymaps/defauld
-          output-dir: qmk-firmware-to-be-flashed
-
-      - uses: actions/upload-artifact@v4
+          keymap-path: "keyboards/bastardkb/skeletyl/keymaps/justgook"
+          keyboard: "bastardkb/skeletyl"
+          keymap: "defauld"
+      - name: Upload a Firmware
+        uses: actions/upload-artifact@v3.1.2
         with:
-          name: built-images
-          path: qmk-firmware-to-be-flashed
+          name: firmware
+          path: build
