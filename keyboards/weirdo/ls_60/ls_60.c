@@ -1,4 +1,4 @@
-  /* Copyright 2021 Weirdo
+ /* Copyright 2022 Ivan Gromov (@key10iq)
   * 
   * This program is free software: you can redistribute it and/or modify 
   * it under the terms of the GNU General Public License as published by 
@@ -13,13 +13,6 @@
   * You should have received a copy of the GNU General Public License 
   * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
   */ 
-#include "quantum.h"
 
 
-void led_update_ports(led_t led_state) {
-    if(led_state.caps_lock){
-        rgblight_setrgb_at(192, 192, 192, 0);
-    } else {
-        rgblight_setrgb_at(0, 0, 0, 0);
-    }
-}
+#include "kt60_m.h"
