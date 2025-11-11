@@ -1,7 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "split_common/transactions.h"
 #include "drivers/oled/oled_driver.h"
-#include "sm_td.h"
 #include <math.h> // For sine wave animation
 
 // -- Advanced Key Press Histogram --
@@ -182,90 +181,6 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
     }
 }
 
-smtd_resolution on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
-    // --- Histogram and Tap Time Logic ---
-
-    int16_t index = keycode_to_histogram_index(keycode);
-
-    if (index != -1) {
-        if (action == SMTD_ACTION_TAP) {
-            uint16_t press_time = press_time_cache[index];
-
-            if (press_time != 0) {
-                if (keycode == KC_Q) {
-                    // Only count KC_Q on the second tap (tap_count is 0-indexed).
-
-                    if (tap_count == 1) {
-                        increment_key_count(KC_Q);
-
-                        total_tap_time += timer_elapsed(press_time);
-
-                        total_tap_count++;
-                    }
-
-                } else {
-                    increment_key_count(keycode);
-
-                    total_tap_time += timer_elapsed(press_time);
-
-                    total_tap_count++;
-                }
-
-                press_time_cache[index] = 0;
-            }
-
-        } else if (action == SMTD_ACTION_HOLD) {
-            press_time_cache[index] = 0;
-        }
-    }
-
-    // --- Key Action Logic ---
-
-    switch (keycode) {
-        case KC_Q:
-
-            switch (action) {
-                case SMTD_ACTION_TOUCH:
-
-                    return SMTD_RESOLUTION_UNCERTAIN;
-
-                case SMTD_ACTION_TAP:
-
-                    // tap_count is 0-indexed: 0 is the first tap, 1 is the second.
-
-                    if (tap_count == 0) {
-                        tap_code16(KC_Q); // Single tap = Q
-
-                    } else if (tap_count == 1) {
-                        tap_code16(KC_ESC); // Double tap = ESC
-                    }
-
-                    return SMTD_RESOLUTION_DETERMINED;
-
-                default:
-
-                    return SMTD_RESOLUTION_DETERMINED;
-            }
-
-            // --- Other SMTD Keys ---
-
-            SMTD_MT(KC_A, KC_LSFT)
-            SMTD_MT(KC_S, KC_LCTL)
-            SMTD_MT(KC_D, KC_LGUI)
-
-            SMTD_MT(KC_F, KC_LALT)
-            SMTD_LT(KC_Z, 2)
-            SMTD_MT(KC_J, KC_RALT)
-            SMTD_MT(KC_K, KC_RGUI)
-
-            SMTD_MT(KC_L, KC_RCTL) SMTD_MT(KC_SCLN, KC_RSFT) SMTD_LT(KC_SLSH, 2) SMTD_LT(KC_TAB, 1)
-    }
-
-    return SMTD_RESOLUTION_UNHANDLED;
-}
-
-void smtd_off_action(uint16_t keycode, keyrecord_t *record) {}
-
 void matrix_init_user(void) {
     last_activity_timer = timer_read32();
 }
@@ -281,10 +196,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     int16_t index = keycode_to_histogram_index(keycode);
     if (index != -1 && record->event.pressed) {
         press_time_cache[index] = record->event.time;
-    }
-
-    if (!process_smtd(keycode, record)) {
-        return false;
     }
 
     if (index != -1 && !record->event.pressed) {
