@@ -1,0 +1,25 @@
+name: 'Build Skeletyl Firmware'
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: qmkfm/qmk_cli
+    steps:
+      - name: Checkout QMK
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
+      - name: Compile Firmware
+        run: qmk compile -kb axl13/my_skeletyl -km default
+
+      - name: Upload Firmware Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: skeletyl-firmware
+          path: axl13_my_skeletyl_default.hex
