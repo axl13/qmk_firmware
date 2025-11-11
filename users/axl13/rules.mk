@@ -1,2 +1,1 @@
-SRC += keymap.c
-COMMUNITY_MODULES_ENABLE = yes
+QMK_MMOD_DIRS += $(QMK_HOME)/modules/stasmarkin/sm_td
