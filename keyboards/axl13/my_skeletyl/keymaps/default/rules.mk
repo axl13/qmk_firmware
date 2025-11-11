@@ -1,1 +1,1 @@
-SRC = $(QMK_HOME)/users/axl13/keymap.c
+USERSPACE = axl13
