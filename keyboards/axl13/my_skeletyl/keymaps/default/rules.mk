@@ -1,1 +1,1 @@
-SRC += keymap.c
+SRC += my_keymap.c
