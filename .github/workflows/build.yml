@@ -15,8 +15,15 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Debug Rules.mk files
+        run: |
+          echo "--- keyboards/axl13/my_skeletyl/rules.mk ---"
+          cat keyboards/axl13/my_skeletyl/rules.mk
+          echo "--- keyboards/axl13/my_skeletyl/keymaps/default/rules.mk ---"
+          cat keyboards/axl13/my_skeletyl/keymaps/default/rules.mk
+
       - name: Compile Firmware
-        run: qmk compile -kb axl13/my_skeletyl -km default
+        run: qmk compile -kb axl13/my_skeletyl -km default VERBOSE=true
 
       - name: Upload Firmware Artifact
         uses: actions/upload-artifact@v4
