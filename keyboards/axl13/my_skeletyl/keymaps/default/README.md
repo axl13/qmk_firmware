@@ -1,95 +1,36 @@
-# Skeletyl/Tracktyl Custom Firmware
+# Quantum Mechanical Keyboard Firmware
 
-This document outlines the features, layout, and build instructions for this custom QMK firmware for the Skeletyl/Tracktyl keyboard.
+[![Current Version](https://img.shields.io/github/tag/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/tags)
+[![Discord](https://img.shields.io/discord/440868230475677696.svg)](https://discord.gg/qmk)
+[![Docs Status](https://img.shields.io/badge/docs-ready-orange.svg)](https://docs.qmk.fm)
+[![GitHub contributors](https://img.shields.io/github/contributors/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/pulse/monthly)
+[![GitHub forks](https://img.shields.io/github/forks/qmk/qmk_firmware.svg?style=social&label=Fork)](https://github.com/qmk/qmk_firmware/)
 
-## How to Build
+This is a keyboard firmware based on the [tmk\_keyboard firmware](https://github.com/tmk/tmk_keyboard) with some useful features for Atmel AVR and ARM controllers, and more specifically, the [OLKB product line](https://olkb.com), the [ErgoDox EZ](https://ergodox-ez.com) keyboard, and the Clueboard product line.
 
-To build this firmware, you need a working QMK build environment.
+## Documentation
 
-1.  **Clone the Repository:**
-    Ensure you have this entire `qmk_firmware` fork cloned to your local machine.
+* [See the official documentation on docs.qmk.fm](https://docs.qmk.fm)
 
-2.  **Navigate to the QMK Directory:**
-    Open your terminal and navigate to the root of the `qmk_firmware_new` directory:
-    ```bash
-    cd /path/to/your/skeletyl/qmk_firmware_new
-    ```
+The docs are powered by [VitePress](https://vitepress.dev/). They are also viewable offline; see [Previewing the Documentation](https://docs.qmk.fm/#/contributing?id=previewing-the-documentation) for more details.
 
-3.  **Run the Compile Command:**
-    Execute the following command to build the firmware.
-    ```bash
-    qmk compile -kb axl13/my_skeletyl -km default
-    ```
+You can request changes by making a fork and opening a [pull request](https://github.com/qmk/qmk_firmware/pulls).
 
-4.  **Find the Firmware File:**
-    Upon successful compilation, the `.hex` file will be located in the `qmk_firmware_new` root directory, named `axl13_my_skeletyl_default.hex`.
+## Supported Keyboards
 
-5.  **Flash the Firmware:**
-    Use the QMK Toolbox or your preferred flashing utility to flash the generated `.hex` file to your keyboard.
+* [Planck](/keyboards/planck/)
+* [Preonic](/keyboards/preonic/)
+* [ErgoDox EZ](/keyboards/ergodox_ez/)
+* [Clueboard](/keyboards/clueboard/)
+* [Cluepad](/keyboards/clueboard/17/)
+* [Atreus](/keyboards/atreus/)
 
----
+The project also includes community support for [lots of other keyboards](/keyboards/).
 
-## Custom Features
+## Maintainers
 
-This firmware includes several custom features integrated directly into the keymap.
+QMK is developed and maintained by Jack Humbert of OLKB with contributions from the community, and of course, [Hasu](https://github.com/tmk). The OLKB product firmwares are maintained by [Jack Humbert](https://github.com/jackhumbert), the Ergodox EZ by [ZSA Technology Labs](https://github.com/zsa), the Clueboard by [Zach White](https://github.com/skullydazed), and the Atreus by [Phil Hagelberg](https://github.com/technomancy).
 
-### 1. Advanced OLED Display
+## Official Website
 
-The OLED screen provides real-time feedback and statistics.
-
-*   **Key Press Histogram:** The primary screen displays a histogram of your most frequently pressed keys. It tracks letters and numbers, showing you a visual representation of your typing habits.
-*   **Average Tap Time:** In the top right corner, a small display shows the average time (in milliseconds) for your key taps.
-*   **Idle Animation:** If the keyboard is idle for more than 15 seconds, the histogram is replaced by an animated sine wave for a simple screen-saver effect.
-
-### 2. Statistics Reset
-
-A custom keycode, `RESET_STATS`, is available on Layer 2. Pressing this key will reset all accumulated statistics for the key press histogram and average tap time.
-
-### 3. Key Combos
-
-To make typing common character pairs easier, several combos are configured:
-
-| Keys Pressed   | Character Produced |
-| :------------- | :----------------- |
-| `U` + `I`      | `"` (Double Quote) |
-| `M` + `,`      | `_` (Underscore)   |
-| `I` + `O`      | `'` (Single Quote) |
-| `E` + `W`      | `` ` `` (Backtick)     |
-
----
-
-## Keymap Layouts
-
-There are 3 layers defined in this keymap: Base, Symbols, and Utility.
-
-### Layer 0: Base Layer
-
-This is the default layer for standard typing.
-
-| Q     | W     | E     | R     | T     | | Y     | U     | I     | O     | P     |
-| :---- | :---- | :---- | :---- | :---- | :- | :---- | :---- | :---- | :---- | :---- |
-| A     | S     | D     | F     | G     | | H     | J     | K     | L     | ;     |
-| Z     | X     | C     | V     | B     | | N     | M     | ,     | .     | /     |
-|       |       | **LGui**  | **Tab**   | **BSPC**  | | **SPC** | **Enter** | **ESC**   |       |       |
-
-### Layer 1: Symbols & Numbers
-
-Accessed by holding one of the thumb keys.
-
-| !     | @     | #     | $     | %     | | ^     | &     | *     | (     | )     |
-| :---- | :---- | :---- | :---- | :---- | :- | :---- | :---- | :---- | :---- | :---- |
-| 1     | 2     | 3     | 4     | 5     | | 6     | 7     | 8     | 9     | 0     |
-| `    | ~     | Left  | Right | =     | | -     | Up    | Down  | "    | '     |
-|       |       | **LCtl**  | **(trans)** | **Del**   | | **SPC** | **Enter** | **MO(0)** |       |       |
-
-### Layer 2: Utility & Reset
-
-| +        | _           | **RST_ST** | (no)  | (no)  | | ^     | &     | "    | {     | }     |
-| :------- | :---------- | :--------- | :---- | :---- | :- | :---- | :---- | :---- | :---- | :---- |
-| =        | `          | (no)       | (no)  | (no)  | | +     | -     | =     | \    | |    |
-| ~        | |          | Home       | End   | (no)  | | _     | PgUp  | PgDn  | [     | ]     |
-|          |             | **LCtl**     | **End**   | **Del**   | | **RAlt**| **Enter** | **(trans)** |       |       |
-
-*   **RST_ST**: Resets the OLED statistics.
-*   **MO(0)**: Momentarily activates Layer 0 while held.
-*   **(trans)**: Transparent key, passes through to the layer below.
+[qmk.fm](https://qmk.fm) is the official website of QMK, where you can find links to this page, the documentation, and the keyboards supported by QMK.

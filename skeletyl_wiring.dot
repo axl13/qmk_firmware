@@ -1,0 +1,96 @@
+digraph SkeletylHandwire {
+    // Graph styling
+    graph [
+        rankdir="LR";
+        bgcolor="#333333";
+        fontname="Arial";
+        fontsize=18;
+        fontcolor="white";
+        label="Skeletyl Left Half Wiring (Pro Micro)";
+    ];
+
+    // Node styling
+    node [
+        shape="record";
+        style="filled";
+        fillcolor="#555555";
+        fontname="Arial";
+        fontsize=12;
+        fontcolor="white";
+        color="#999999";
+    ];
+
+    // Edge styling
+    edge [
+        color="#CCCCCC";
+        fontcolor="#CCCCCC";
+        fontsize=10;
+    ];
+
+    // Pro Micro MCU
+    subgraph cluster_mcu {
+        label="Pro Micro (atmega32u4)";
+        labeljust="l";
+        fontcolor="white";
+        color="#777777";
+
+        pro_micro [
+            label="<TX> TX (1) | <RX> RX (0) | GND | GND | <SCL> SCL (3) | <SDA> SDA (2) | <D4> D4 | <C6> C6 | <D7> D7 | <E6> E6 | <B4> B4 | <B5> B5 | <RAW> RAW | GND | RST | VCC | <F4> F4 | <F5> F5 | <F6> F6 | <F7> F7 | B6 | D2"
+        ];
+    }
+
+    // Keyboard Matrix
+    subgraph cluster_matrix {
+        label="Key Matrix";
+        labeljust="l";
+        fontcolor="white";
+        color="#777777";
+
+        matrix [
+            shape="none";
+            label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="8" COLOR="#777777">
+                <TR><TD>R1</TD><TD>R2</TD><TD>R3</TD><TD>R4</TD></TR>
+                <TR><TD>C1</TD><TD>C2</TD><TD>C3</TD><TD>C4</TD><TD>C5</TD><TD>C6</TD></TR>
+            </TABLE>>; 
+        ];
+    }
+    
+    // Split / OLED
+    subgraph cluster_connections {
+        label="Peripherals & Split";
+        labeljust="l";
+        fontcolor="white";
+        color="#777777";
+        
+        trrs [ label="TRRS Jack" ];
+        oled [ label="OLED Display" ];
+    }
+
+
+    // --- Connections ---
+
+    // Rows
+    pro_micro:F4 -> matrix [label="Row 1"];
+    pro_micro:F5 -> matrix [label="Row 2"];
+    pro_micro:F6 -> matrix [label="Row 3"];
+    pro_micro:F7 -> matrix [label="Row 4"];
+
+    // Columns
+    pro_micro:D4 -> matrix [label="Col 1"];
+    pro_micro:C6 -> matrix [label="Col 2"];
+    pro_micro:D7 -> matrix [label="Col 3"];
+    pro_micro:E6 -> matrix [label="Col 4"];
+    pro_micro:B4 -> matrix [label="Col 5"];
+    pro_micro:B5 -> matrix [label="Col 6"];
+    
+    // Split Connection (Soft Serial)
+    pro_micro:D2 -> trrs [label="Serial Data"];
+    pro_micro:VCC -> trrs [label="VCC"];
+    pro_micro:GND -> trrs [label="GND"];
+    
+    // OLED Connection (I2C)
+    pro_micro:SDA -> oled [label="SDA"];
+    pro_micro:SCL -> oled [label="SCL"];
+    pro_micro:VCC -> oled [label="VCC"];
+    pro_micro:GND -> oled [label="GND"];
+}
