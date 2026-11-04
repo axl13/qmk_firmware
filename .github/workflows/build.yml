@@ -19,7 +19,9 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch LUFA USB stack
-        run: git submodule update --init --depth 1 -- lib/lufa
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git submodule update --init --depth 1 -- lib/lufa
 
       - name: Compile Firmware
         run: qmk compile -kb axl13/my_skeletyl -km default
