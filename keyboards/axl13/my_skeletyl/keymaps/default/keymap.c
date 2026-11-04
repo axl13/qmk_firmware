@@ -61,7 +61,7 @@ static void dance_semi_quote_reset(tap_dance_state_t *state, void *user_data) {
 
 tap_dance_action_t tap_dance_actions[] = {
     [TD_Q_GRV]       = ACTION_TAP_DANCE_DOUBLE(KC_Q, KC_GRV),
-    [TD_P_SQT]       = ACTION_TAP_DANCE_DOUBLE(KC_P, KC_SQT),
+    [TD_P_SQT]       = ACTION_TAP_DANCE_DOUBLE(KC_P, KC_QUOT),
     [TD_A_ESC]       = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_a_esc_finished, dance_a_esc_reset),
     [TD_SEMI_QUOTE]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_semi_quote_finished, dance_semi_quote_reset),
     [TD_SLASH_NUBS]  = ACTION_TAP_DANCE_DOUBLE(KC_SLSH, KC_NUBS),
