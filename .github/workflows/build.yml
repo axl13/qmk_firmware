@@ -11,12 +11,11 @@ jobs:
     container: qmkfm/qmk_cli
     steps:
       - name: Checkout QMK
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
-          # The custom keymap directory contains copied QMK submodule gitlinks;
-          # fetch only the dependency needed by this AVR target below.
+          # This AVR target needs LUFA; the other root submodules are unrelated.
           submodules: false
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Fetch LUFA USB stack
         run: |
@@ -27,7 +26,9 @@ jobs:
         run: qmk compile -kb axl13/my_skeletyl -km default
 
       - name: Upload Firmware Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: skeletyl-firmware
           path: axl13_my_skeletyl_default.hex
+          if-no-files-found: error
+          retention-days: 30
