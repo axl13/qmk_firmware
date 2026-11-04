@@ -13,7 +13,9 @@ jobs:
       - name: Checkout QMK
         uses: actions/checkout@v3
         with:
-          submodules: 'recursive'
+          # The custom keymap directory contains a copied .gitmodules file with
+          # a nested ChibiOS gitlink. Only fetch QMK's root submodules here.
+          submodules: true
           fetch-depth: 0
 
       - name: Compile Firmware
