@@ -140,15 +140,21 @@ def keyboard_aliases(keyboard):
 
     Includes the keyboard itself.
     """
-    aliases = json_load(Path('data/mappings/keyboard_aliases.hjson'))
+    aliases = keyboard_alias_definitions()
 
-    if keyboard in aliases:
-        keyboard = aliases[keyboard].get('target', keyboard)
+    def _resolve_recursive_aliases(kb):
+        ret = set()
+        for found in filter(lambda k: aliases[k].get('target', '') == kb, aliases.keys()):
+            ret.update(_resolve_recursive_aliases(found))
+            ret.add(found)
+        return ret
 
-    keyboards = set(filter(lambda k: aliases[k].get('target', '') == keyboard, aliases.keys()))
+    keyboard = keyboard_folder(keyboard)
+
+    keyboards = _resolve_recursive_aliases(keyboard)
     keyboards.add(keyboard)
-    keyboards = list(sorted(keyboards))
-    return keyboards
+
+    return list(sorted(keyboards))
 
 
 def keyboard_folder_or_all(keyboard):
@@ -175,14 +181,18 @@ def keyboard_completer(prefix, action, parser, parsed_args):
     return list_keyboards()
 
 
+@lru_cache(maxsize=None)
 def list_keyboards():
-    """Returns a list of all keyboards
+    """Returns a list of all keyboards.
     """
     # We avoid pathlib here because this is performance critical code.
     kb_wildcard = os.path.join(base_path, "**", 'keyboard.json')
     paths = [path for path in glob(kb_wildcard, recursive=True) if os.path.sep + 'keymaps' + os.path.sep not in path]
 
     found = map(_find_name, paths)
+
+    # Convert to posix paths for consistency
+    found = map(lambda x: str(Path(x).as_posix()), found)
 
     return sorted(set(found))
 
@@ -220,8 +230,8 @@ def rules_mk(keyboard):
     keyboard = Path(keyboard)
     rules = parse_rules_mk_file(cur_dir / keyboard / 'rules.mk')
 
-    for i, dir in enumerate(keyboard.parts):
-        cur_dir = cur_dir / dir
+    for folder in keyboard.parts:
+        cur_dir = cur_dir / folder
         rules = parse_rules_mk_file(cur_dir / 'rules.mk', rules)
 
     return rules

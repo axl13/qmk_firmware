@@ -347,6 +347,11 @@ void EVENT_USB_Device_ConfigurationChanged(void) {
     ConfigSuccess &= Endpoint_ConfigureEndpoint((RAW_OUT_EPNUM | ENDPOINT_DIR_OUT), EP_TYPE_INTERRUPT, RAW_EPSIZE, 1);
 #endif
 
+#ifdef PLOVER_HID_ENABLE
+    /* Setup plover HID endpoints */
+    ConfigSuccess &= Endpoint_ConfigureEndpoint((PLOVER_HID_IN_EPNUM | ENDPOINT_DIR_IN), EP_TYPE_INTERRUPT, PLOVER_HID_EPSIZE, 1);
+#endif
+
 #ifdef CONSOLE_ENABLE
     /* Setup console endpoint */
     ConfigSuccess &= Endpoint_ConfigureEndpoint((CONSOLE_IN_EPNUM | ENDPOINT_DIR_IN), EP_TYPE_INTERRUPT, CONSOLE_EPSIZE, 1);
@@ -568,6 +573,12 @@ void send_programmable_button(report_programmable_button_t *report) {
 void send_digitizer(report_digitizer_t *report) {
 #ifdef DIGITIZER_ENABLE
     send_report(DIGITIZER_IN_EPNUM, report, sizeof(report_digitizer_t));
+#endif
+}
+
+void send_plover_hid(report_plover_hid_t *report) {
+#ifdef PLOVER_HID_ENABLE
+    send_report(PLOVER_HID_IN_EPNUM, report, sizeof(report_plover_hid_t));
 #endif
 }
 
@@ -826,6 +837,9 @@ void protocol_pre_task(void) {
                 //
                 // Pause for a while to let things settle...
                 wait_ms(USB_SUSPEND_WAKEUP_DELAY);
+                // ...and then update the wakeup matrix again as the waking key
+                // might have been released during the delay
+                update_matrix_state_after_wakeup();
 #    endif
             }
         }
