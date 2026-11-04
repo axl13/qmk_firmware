@@ -13,10 +13,13 @@ jobs:
       - name: Checkout QMK
         uses: actions/checkout@v3
         with:
-          # The custom keymap directory contains a copied .gitmodules file with
-          # a nested ChibiOS gitlink. Only fetch QMK's root submodules here.
-          submodules: true
+          # The custom keymap directory contains copied QMK submodule gitlinks;
+          # fetch only the dependency needed by this AVR target below.
+          submodules: false
           fetch-depth: 0
+
+      - name: Fetch LUFA USB stack
+        run: git submodule update --init --depth 1 -- lib/lufa
 
       - name: Compile Firmware
         run: qmk compile -kb axl13/my_skeletyl -km default
