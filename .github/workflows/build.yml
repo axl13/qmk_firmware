@@ -1,34 +1,93 @@
 name: 'Build Skeletyl Firmware'
 
+# Builds keyboards/axl13/my_skeletyl against the LATEST QMK release tag
+# (not this fork's master), so firmware always tracks current QMK.
+
 on:
   push:
+    paths:
+      - 'keyboards/axl13/**'
+      - '.github/workflows/build.yml'
   pull_request:
+    paths:
+      - 'keyboards/axl13/**'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
+    inputs:
+      qmk_ref:
+        description: 'QMK tag/branch to build against (empty = latest release)'
+        required: false
+        default: ''
+
+env:
+  KEYBOARD: axl13/my_skeletyl
+  KEYMAP: default
+  # getreuer/qmk-modules (sentence_case), pinned for reproducible builds
+  GETREUER_MODULES_SHA: c00d73ace9d2012605e84ac1c94d8c3d78c17666
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: qmkfm/qmk_cli
+    container: ghcr.io/qmk/qmk_cli
     steps:
-      - name: Checkout QMK
-        uses: actions/checkout@v7
+      - name: Checkout keyboard sources (this repo)
+        uses: actions/checkout@v4
         with:
-          # This AVR target needs LUFA; the other root submodules are unrelated.
-          submodules: false
+          path: fork
           fetch-depth: 1
+          sparse-checkout: |
+            keyboards/axl13
 
-      - name: Fetch LUFA USB stack
+      - name: Resolve QMK release
+        id: qmk
+        shell: bash
         run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git submodule update --init --depth 1 -- lib/lufa
+          REF="${{ github.event.inputs.qmk_ref }}"
+          if [ -z "$REF" ]; then
+            REF=$(git ls-remote --tags --refs https://github.com/qmk/qmk_firmware.git \
+                  | awk -F/ '{print $3}' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          fi
+          echo "Building against QMK $REF"
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
 
-      - name: Compile Firmware
-        run: qmk compile -kb axl13/my_skeletyl -km default
-
-      - name: Upload Firmware Artifact
-        uses: actions/upload-artifact@v7
+      - name: Checkout QMK ${{ steps.qmk.outputs.ref }}
+        uses: actions/checkout@v4
         with:
-          name: skeletyl-firmware
-          path: axl13_my_skeletyl_default.hex
+          repository: qmk/qmk_firmware
+          ref: ${{ steps.qmk.outputs.ref }}
+          path: qmk
+          fetch-depth: 1
+          submodules: false
+
+      - name: Prepare QMK tree
+        shell: bash
+        working-directory: qmk
+        run: |
+          git config --global --add safe.directory '*'
+          # AVR target only needs LUFA (and printf); skip ChibiOS etc.
+          git submodule update --init --depth 1 -- lib/lufa lib/printf
+          # Overlay the custom keyboard (wiring, OLED, keymap)
+          mkdir -p keyboards/axl13
+          cp -R ../fork/keyboards/axl13/. keyboards/axl13/
+          # Community modules used by keymap.json
+          git clone --quiet https://github.com/getreuer/qmk-modules.git modules/getreuer
+          git -C modules/getreuer checkout --quiet "$GETREUER_MODULES_SHA"
+
+      - name: Compile firmware
+        shell: bash
+        working-directory: qmk
+        run: |
+          qmk compile -kb "$KEYBOARD" -km "$KEYMAP" | tee build.log
+          echo '### Firmware size' >> "$GITHUB_STEP_SUMMARY"
+          echo "QMK ${{ steps.qmk.outputs.ref }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          grep -iE 'bytes free|over by|The firmware size is' build.log >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: skeletyl-firmware-qmk-${{ steps.qmk.outputs.ref }}
+          path: qmk/axl13_my_skeletyl_default.hex
           if-no-files-found: error
           retention-days: 30

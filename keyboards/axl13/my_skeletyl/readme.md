@@ -1,9 +1,60 @@
 # My Skeletyl Handwired Keyboard
 
-- **Keyboard:** Skeletyl Handwired
+- **Keyboard:** Skeletyl, hand-wired (ATmega32U4 / Pro Micro, Caterina)
+- **Split:** soft serial on D2, left half is master
+- **OLED:** SH1106; key-press histogram, average tap time, idle wave animation
 - **Maintainer:** axl13
 
-A custom handwired Skeletyl keyboard.
+Same layout as the ZMK Skeletyl in
+[axl13/zmk-config-bkb](https://github.com/axl13/zmk-config-bkb), aligned with
+Kinesis Advantage muscle memory.
 
-Make example for this keyboard:
-`qmk compile -kb my_skeletyl -km default`
+![Keymap](assets/my_skeletyl_keymap.svg)
+
+Printable one-page version: [assets/my_skeletyl_keymap.pdf](assets/my_skeletyl_keymap.pdf) (A4).
+
+## Layout notes
+
+| Thumb | Left (outer → inner) | Right (inner → outer) |
+|---|---|---|
+| tap | Bspc · Cmd · Esc | Tab · Enter · Space |
+| hold | – · – · Symbols | Symbols · Function · – |
+
+Combos (Base layer only), placed where the Kinesis has the key. Shift is held
+on the **opposite** hand:
+
+| Combo | Output | + opposite Shift |
+|---|---|---|
+| `Q+W` | `=` | hold `;` → `+` |
+| `Z+X` | `` ` `` | hold `;` → `~` |
+| `O+P` | `\` | hold `A` → `\|` |
+| `L+;` | `'` | hold `A` → `"` |
+| `,+.` | `[` | hold `A` → `{` |
+| `.+/` | `]` | hold `A` → `}` |
+
+`O+P` and `.+/` only fire after a 150 ms pause (`op` and `./` occur mid-word).
+
+- **Home-row mods** use QMK Chordal Hold: a mod only holds when the next key
+  is on the other hand or a thumb.
+- **Sentence case** ([getreuer/sentence_case](https://getreuer.info/posts/keyboards/sentence-case))
+  capitalises the first letter after `. ! ?`. Toggle it with Function + G.
+- **Function + R** resets the OLED statistics.
+- **€** is Function + D (macOS US layout).
+
+## Build
+
+GitHub Actions builds this keyboard against the **latest QMK release**; the
+`.hex` is attached to each run as an artifact. Locally:
+
+```sh
+# in a qmk_firmware checkout at a release tag
+cp -R <this fork>/keyboards/axl13 keyboards/
+git clone https://github.com/getreuer/qmk-modules.git modules/getreuer
+qmk compile -kb axl13/my_skeletyl -km default
+```
+
+Regenerate the diagrams (SVG, PNG, printable PDF) after any keymap change:
+
+```sh
+keyboards/axl13/my_skeletyl/scripts/draw_keymap.sh
+```

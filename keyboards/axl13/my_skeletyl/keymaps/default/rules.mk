@@ -1,13 +1,15 @@
+# Hand-wired split with OLED
 SPLIT_KEYBOARD = yes
-SPLIT_OLED_ENABLE = yes
 OLED_ENABLE = yes
-TAP_DANCE_ENABLE = yes
 DEFERRED_EXEC_ENABLE = yes
 LTO_ENABLE = yes
 
-# These are not used by the migrated ZMK keymap and waste AVR flash.
-COMBO_ENABLE = no
-EXTRAKEY_ENABLE = no
+# Layout features
+COMBO_ENABLE = yes
+EXTRAKEY_ENABLE = yes   # volume, play, brightness on the Function layer
+
+# Not used; saves AVR flash
+TAP_DANCE_ENABLE = no
 MOUSEKEY_ENABLE = no
 NKRO_ENABLE = no
 WPM_ENABLE = no

@@ -1,0 +1,171 @@
+layout:
+  qmk_keyboard: bastardkb/skeletyl
+  layout_name: LAYOUT_split_3x5_3
+layers:
+  Base:
+  - Q
+  - W
+  - E
+  - R
+  - T
+  - Y
+  - U
+  - I
+  - O
+  - P
+  - t: A
+    h: Shift
+  - t: S
+    h: Ctrl
+  - t: D
+    h: Cmd
+  - t: F
+    h: Alt
+  - G
+  - H
+  - t: J
+    h: Alt
+  - t: K
+    h: Cmd
+  - t: L
+    h: Ctrl
+  - t: ;
+    h: Shift
+  - Z
+  - X
+  - C
+  - V
+  - B
+  - N
+  - M
+  - ','
+  - .
+  - /
+  - Bspc
+  - Cmd
+  - t: Esc
+    h: Symbols
+  - t: Tab
+    h: Symbols
+  - t: Enter
+    h: Function
+  - Space
+  Symbols:
+  - '!'
+  - '@'
+  - '#'
+  - $
+  - '%'
+  - ^
+  - '&'
+  - '*'
+  - (
+  - )
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '9'
+  - '0'
+  - '`'
+  - '='
+  - ←
+  - →
+  - ':'
+  - .
+  - ↑
+  - ↓
+  - _
+  - '-'
+  - Del
+  - Ctrl
+  - t: ''
+    type: held
+  - t: ''
+    type: held
+  - Enter
+  - Space
+  Function:
+  - F1
+  - F2
+  - F3
+  - F4
+  - F5
+  - F6
+  - F7
+  - F8
+  - F9
+  - F10
+  - F11
+  - F12
+  - €
+  - 'Reset
+
+    stats'
+  - 'Sent.
+
+    case'
+  - Mute
+  - Vol −
+  - Vol +
+  - Play
+  - ''
+  - ''
+  - ''
+  - Home
+  - End
+  - ''
+  - Ins
+  - PgUp
+  - PgDn
+  - Brt −
+  - Brt +
+  - Del
+  - Ctrl
+  - End
+  - t: ▽
+    type: trans
+  - t: ''
+    type: held
+  - Space
+combos:
+- p:
+  - 0
+  - 1
+  k: '='
+  l:
+  - Base
+- p:
+  - 20
+  - 21
+  k: '`'
+  l:
+  - Base
+- p:
+  - 8
+  - 9
+  k: \
+  l:
+  - Base
+- p:
+  - 18
+  - 19
+  k: ''''
+  l:
+  - Base
+- p:
+  - 27
+  - 28
+  k: '['
+  l:
+  - Base
+- p:
+  - 28
+  - 29
+  k: ']'
+  l:
+  - Base
