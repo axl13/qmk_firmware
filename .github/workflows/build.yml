@@ -31,7 +31,7 @@ jobs:
     container: ghcr.io/qmk/qmk_cli
     steps:
       - name: Checkout keyboard sources (this repo)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           path: fork
           fetch-depth: 1
@@ -51,7 +51,7 @@ jobs:
           echo "ref=$REF" >> "$GITHUB_OUTPUT"
 
       - name: Checkout QMK ${{ steps.qmk.outputs.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: qmk/qmk_firmware
           ref: ${{ steps.qmk.outputs.ref }}
@@ -85,7 +85,7 @@ jobs:
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload firmware
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: skeletyl-firmware-qmk-${{ steps.qmk.outputs.ref }}
           path: qmk/axl13_my_skeletyl_default.hex
