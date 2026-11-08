@@ -1,1 +1,6 @@
 .venv/
+
+# Upstream QMK ignores images/PDFs repo-wide; keep the keymap diagrams.
+!assets/my_skeletyl_keymap.svg
+!assets/my_skeletyl_keymap.png
+!assets/my_skeletyl_keymap.pdf
