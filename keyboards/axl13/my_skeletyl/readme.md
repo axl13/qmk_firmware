@@ -27,11 +27,13 @@ on the **opposite** hand:
 |---|---|---|
 | `Q+W` | `=` | hold `;` → `+` |
 | `Z+X` | `` ` `` | hold `;` → `~` |
+| `I+O` | `-` | hold `A` → `_` |
 | `O+P` | `\` | hold `A` → `\|` |
 | `L+;` | `'` | hold `A` → `"` |
 | `,+.` | `[` | hold `A` → `{` |
 | `.+/` | `]` | hold `A` → `}` |
 
+`I+O` uses a 25 ms window so fast rolls through `io` stay letters.
 `O+P` and `.+/` only fire after a 150 ms pause (`op` and `./` occur mid-word).
 
 - **Home-row mods** use QMK Chordal Hold: a mod only holds when the next key

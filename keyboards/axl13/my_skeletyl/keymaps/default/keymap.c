@@ -2,8 +2,8 @@
 //
 // Mirrors github.com/axl13/zmk-config-bkb (Kinesis Advantage aligned):
 //   Thumbs:  Bspc  Cmd  Esc/Sym   |   Tab/Sym  Enter/Fn  Space
-//   Combos:  Q+W =   Z+X `   O+P \   L+; '   ,+. [   .+/ ]
-//            Shift on the OPPOSITE hand gives + ~ | " { }
+//   Combos:  Q+W =   Z+X `   I+O -   O+P \   L+; '   ,+. [   .+/ ]
+//            Shift on the OPPOSITE hand gives + ~ _ | " { }
 //   Home-row mods are positional (Chordal Hold): a mod only holds when the
 //   next key is on the other hand or a thumb.
 //   Sentence case: getreuer/sentence_case community module (keymap.json).
@@ -91,6 +91,7 @@ const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT_split_
 enum combo_events {
     C_QW_EQL,
     C_ZX_GRV,
+    C_IO_MINS,
     C_OP_BSLS,
     C_LSCLN_QUOT,
     C_COMMDOT_LBRC,
@@ -99,6 +100,7 @@ enum combo_events {
 
 const uint16_t PROGMEM qw_combo[]      = {KC_Q, KC_W, COMBO_END};
 const uint16_t PROGMEM zx_combo[]      = {KC_Z, KC_X, COMBO_END};
+const uint16_t PROGMEM io_combo[]      = {KC_I, KC_O, COMBO_END};
 const uint16_t PROGMEM op_combo[]      = {KC_O, KC_P, COMBO_END};
 const uint16_t PROGMEM lscln_combo[]   = {HM_L, HM_SCLN, COMBO_END};
 const uint16_t PROGMEM commdot_combo[] = {KC_COMM, KC_DOT, COMBO_END};
@@ -107,6 +109,7 @@ const uint16_t PROGMEM dotslsh_combo[] = {KC_DOT, KC_SLSH, COMBO_END};
 combo_t key_combos[] = {
     [C_QW_EQL]       = COMBO(qw_combo, KC_EQL),
     [C_ZX_GRV]       = COMBO(zx_combo, KC_GRV),
+    [C_IO_MINS]      = COMBO(io_combo, KC_MINS),
     [C_OP_BSLS]      = COMBO(op_combo, KC_BSLS),
     [C_LSCLN_QUOT]   = COMBO(lscln_combo, KC_QUOT),
     [C_COMMDOT_LBRC] = COMBO(commdot_combo, KC_LBRC),
@@ -127,6 +130,11 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
             return timer_elapsed(last_key_press_time) > COMBO_PRIOR_IDLE_MS;
     }
     return true;
+}
+
+// I+O only fires on a near-simultaneous press so rolls through "io" stay letters.
+uint16_t get_combo_term(uint16_t combo_index, combo_t *combo) {
+    return combo_index == C_IO_MINS ? 25 : COMBO_TERM;
 }
 
 // Thumb layer keys keep tap-then-hold auto-repeat (Bspc-style); home-row mods don't.

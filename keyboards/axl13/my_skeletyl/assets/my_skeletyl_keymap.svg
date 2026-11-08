@@ -294,18 +294,22 @@ path.combo {
 <text x="56" y="174" class="combo tap">`</text>
 </g>
 <g class="combo combopos-2">
+<rect rx="6" ry="6" x="714" y="23" width="28" height="26" class="combo"/>
+<text x="728" y="36" class="combo tap">-</text>
+</g>
+<g class="combo combopos-3">
 <rect rx="6" ry="6" x="770" y="49" width="28" height="26" class="combo"/>
 <text x="784" y="62" class="combo tap">\</text>
 </g>
-<g class="combo combopos-3">
+<g class="combo combopos-4">
 <rect rx="6" ry="6" x="770" y="105" width="28" height="26" class="combo"/>
 <text x="784" y="118" class="combo tap">&#x27;</text>
 </g>
-<g class="combo combopos-4">
+<g class="combo combopos-5">
 <rect rx="6" ry="6" x="714" y="135" width="28" height="26" class="combo"/>
 <text x="728" y="148" class="combo tap">[</text>
 </g>
-<g class="combo combopos-5">
+<g class="combo combopos-6">
 <rect rx="6" ry="6" x="770" y="161" width="28" height="26" class="combo"/>
 <text x="784" y="174" class="combo tap">]</text>
 </g>
@@ -614,4 +618,4 @@ path.combo {
 </g>
 </g>
 </g>
-<text x="870.0" y="1004.0" class="footer">my_skeletyl (QMK) v3.4 · small label = hold · blue = combo · Shift on opposite hand</text></svg>
+<text x="870.0" y="1004.0" class="footer">my_skeletyl (QMK) v3.5 · small label = hold · blue = combo · Shift on opposite hand</text></svg>

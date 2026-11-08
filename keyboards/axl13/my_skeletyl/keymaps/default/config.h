@@ -17,6 +17,7 @@
 
 // --- Combos (Kinesis-position symbols) ---
 #define COMBO_TERM 40
+#define COMBO_TERM_PER_COMBO
 #define COMBO_SHOULD_TRIGGER
 #define COMBO_PRIOR_IDLE_MS 150
 
