@@ -21,7 +21,6 @@
 :wery            -> very
 :wich:           -> which
 :wih:            -> with
-accomodate       -> accommodate
 accses           -> access
 achive           -> achieve
 acommodate       -> accommodate
@@ -29,7 +28,6 @@ aggresive        -> aggressive
 alwasy           -> always
 anythign         -> anything
 aobut            -> about
-aparent          -> apparent
 aparrent         -> apparent
 apparant         -> apparent
 apparrent        -> apparent
@@ -52,10 +50,8 @@ chllenge         -> challenge
 choosen          -> chosen
 cieling          -> ceiling
 ckeck            -> check
-collegue         -> colleague
 competetive      -> competitive
 concensus        -> consensus
-concious         -> conscious
 contians         -> contains
 contol           -> control
 cosnt            -> const
@@ -84,7 +80,6 @@ fitler           -> filter
 flase            -> false
 forecat          -> forecast
 forlder          -> folder
-foward           -> forward
 frequecy         -> frequency
 :frmo:               -> from
 fuction          -> function
@@ -125,7 +120,6 @@ namespcae        -> namespace
 nubmer           -> number
 nutriotion       -> nutrition
 obsticle         -> obstacle
-occassion        -> occasion
 occured          -> occurred
 opprotunit       -> opportunit
 optmiz           -> optimiz
@@ -143,7 +137,6 @@ postion          -> position
 powerfull:       -> powerful
 precice          -> precise
 previosly        -> previously
-priviledge       -> privilege
 proffesor        -> professor
 programm:        -> program
 prper            -> proper
@@ -153,10 +146,8 @@ quicly           -> quickly
 recepie          -> recipe
 recieve          -> receive
 recomend         -> recommend
-refered          -> referred
 refesh           -> refresh
 rejeted          -> rejected
-relevent         -> relevant
 remeber          -> remember
 repitition       -> repetition
 reseaarch        -> research

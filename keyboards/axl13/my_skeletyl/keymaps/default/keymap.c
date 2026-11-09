@@ -20,6 +20,7 @@
 
 #include QMK_KEYBOARD_H
 #include <string.h>
+#include <avr/eeprom.h>
 
 #ifdef OS_DETECTION_ENABLE
 #    include "os_detection.h"
@@ -234,6 +235,7 @@ typedef struct {
 } persisted_log_t;
 
 #define LOG_MAGIC 0xA7
+#define LOG_EEPROM_ADDR ((void *)960)
 
 static learned_entry_t learned_typos[3];
 static uint8_t         ac_hit_count     = 0;
@@ -361,14 +363,14 @@ static void save_log_to_eeprom(void) {
     data.magic   = LOG_MAGIC;
     data.ac_hits = ac_hit_count;
     memcpy(data.entries, learned_typos, sizeof(learned_typos));
-    eeconfig_update_user_datablock(&data, 0, sizeof(data));
+    eeprom_update_block(&data, LOG_EEPROM_ADDR, sizeof(data));
     eeprom_dirty   = false;
     eeprom_flushed = true;
 }
 
 static void load_log_from_eeprom(void) {
     persisted_log_t data;
-    eeconfig_read_user_datablock(&data, 0, sizeof(data));
+    eeprom_read_block(&data, (const void *)LOG_EEPROM_ADDR, sizeof(data));
     if (data.magic == LOG_MAGIC) {
         ac_hit_count = data.ac_hits;
         memcpy(learned_typos, data.entries, sizeof(learned_typos));
@@ -433,7 +435,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed && get_highest_layer(layer_state) == _BASE) {
         uint16_t tkc = base_tap_keycode(keycode, record);
         if (tkc != KC_NO) {
-            learner_feed_key(tkc, get_mods() | get_oneshot_mods());
+            learner_feed_key(tkc, get_mods());
         }
     }
     return true;
@@ -592,7 +594,7 @@ static void render_cyber_deck(void) {
     if (ac_on) draw_hline(96, 106, 15);
     if (cw_on) draw_hline(114, 124, 15);
 
-    uint8_t mods = get_mods() | get_oneshot_mods();
+    uint8_t mods = get_mods();
     oled_set_cursor(16, 3);
     char mbuf[6] = {'[', '-', '-', '-', ']', '\0'};
     uint8_t mp = 1;

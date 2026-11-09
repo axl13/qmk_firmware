@@ -13,8 +13,9 @@
 #define OLED_FONT_START 32
 #define OLED_FONT_END 135
 
-// --- Flash diet: 3 layers fit in 8-bit layer mask ---
+// --- Flash diet: 3 layers fit in 8-bit layer mask; no One-Shot keys used ---
 #define LAYER_STATE_8BIT
+#define NO_ACTION_ONESHOT
 
 // --- Tap-hold: mirrors the ZMK config (balanced flavor + positional mods) ---
 #define TAPPING_TERM 200
@@ -33,6 +34,3 @@
 
 // --- Sentence case (getreuer/sentence_case) ---
 #define SENTENCE_CASE_TIMEOUT 2000
-
-// --- User EEPROM datablock for persisting learned typos & OS mode ---
-#define EECONFIG_USER_DATA_SIZE 64
