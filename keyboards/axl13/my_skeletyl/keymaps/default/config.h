@@ -13,9 +13,8 @@
 #define OLED_FONT_START 32
 #define OLED_FONT_END 135
 
-// --- Flash diet: 3 layers fit in 8-bit layer mask; no One-Shot keys used ---
+// --- Flash diet: 3 layers fit in 8-bit layer mask ---
 #define LAYER_STATE_8BIT
-#define NO_ACTION_ONESHOT
 
 // --- Tap-hold: mirrors the ZMK config (balanced flavor + positional mods) ---
 #define TAPPING_TERM 200
