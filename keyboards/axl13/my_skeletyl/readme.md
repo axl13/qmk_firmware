@@ -46,7 +46,16 @@ on the **opposite** hand:
 ## Build
 
 GitHub Actions builds this keyboard against the **latest QMK release**; the
-`.hex` is attached to each run as an artifact. Locally:
+`.hex` is attached to each run as an artifact.
+
+## Flash
+
+Caterina bootloader (Pro Micro): double-tap RESET, then flash with QMK Toolbox
+(MCU `atmega32u4`) or `qmk flash`. Flash the **same hex to both halves** – the
+split protocol differs between QMK versions and a half left on an older build
+stops responding. Left half is master (USB goes there); EE_HANDS is not used.
+
+Locally:
 
 ```sh
 # in a qmk_firmware checkout at a release tag

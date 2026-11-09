@@ -47,4 +47,9 @@ Never hand-edit the generated `assets/my_skeletyl_keymap.*` files.
 - Local build: in a QMK checkout at a release tag, copy `keyboards/axl13`,
   clone getreuer/qmk-modules to `modules/getreuer`, then
   `qmk compile -kb axl13/my_skeletyl -km default`.
-- `keymaps/legacy/` is an archive of the pre-ZMK keymap; it isn't built.
+- Rollback: the pre-v3 firmware that was verified on the board (flash
+  read-back, 2026-11-09) is in history at commit `9004294c12`, path
+  `keyboards/axl13/my_skeletyl/keymaps/default/keyboards/axl13/my_skeletyl/`
+  (sm_td keymap). It is intentionally not kept in the tree.
+- Flash the **same hex to both halves**; the split protocol changes between
+  QMK versions and a half left on an old build stops responding.
