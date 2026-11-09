@@ -33,6 +33,8 @@ LABELS = {
     "LALT(LSFT(KC_2))": "€",
     "RESET_STATS": "Reset\nstats",
     "SENTENCE_CASE_TOGGLE": "Sent.\ncase",
+    "AC_TOGG": "Auto\ncorr",
+    "OS_TOGG": "OS\nmode",
     "QK_BOOT": "Boot",
 }
 MODS = {

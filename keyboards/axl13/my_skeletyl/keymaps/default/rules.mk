@@ -1,12 +1,15 @@
 # Hand-wired split with OLED
 SPLIT_KEYBOARD = yes
 OLED_ENABLE = yes
-DEFERRED_EXEC_ENABLE = yes
 LTO_ENABLE = yes
+DEFERRED_EXEC_ENABLE = no
 
-# Layout features
+# Layout & typing features
 COMBO_ENABLE = yes
-EXTRAKEY_ENABLE = yes   # volume, play, brightness on the Function layer
+EXTRAKEY_ENABLE = yes       # volume, play, brightness on the Function layer
+AUTOCORRECT_ENABLE = yes    # 221-entry dictionary (autocorrect_dict.txt)
+CAPS_WORD_ENABLE = yes      # hold both home-row Shifts (A + ;)
+OS_DETECTION_ENABLE = yes   # auto Mac/Linux logo + Ctrl<->GUI swap
 
 # Not used; saves AVR flash
 TAP_DANCE_ENABLE = no

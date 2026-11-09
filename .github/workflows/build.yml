@@ -77,6 +77,11 @@ jobs:
         shell: bash
         working-directory: qmk
         run: |
+          if [ -f "keyboards/$KEYBOARD/keymaps/$KEYMAP/autocorrect_dict.txt" ]; then
+            qmk generate-autocorrect-data -q \
+              "keyboards/$KEYBOARD/keymaps/$KEYMAP/autocorrect_dict.txt" \
+              -o "keyboards/$KEYBOARD/keymaps/$KEYMAP/autocorrect_data.h"
+          fi
           qmk compile -kb "$KEYBOARD" -km "$KEYMAP" | tee build.log
           echo '### Firmware size' >> "$GITHUB_STEP_SUMMARY"
           echo "QMK ${{ steps.qmk.outputs.ref }}" >> "$GITHUB_STEP_SUMMARY"

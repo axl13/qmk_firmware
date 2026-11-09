@@ -290,26 +290,30 @@ path.combo {
 <text x="56" y="62" class="combo tap">=</text>
 </g>
 <g class="combo combopos-1">
+<rect rx="6" ry="6" x="42" y="105" width="28" height="26" class="combo"/>
+<text x="56" y="118" class="combo tap">Esc</text>
+</g>
+<g class="combo combopos-2">
 <rect rx="6" ry="6" x="42" y="161" width="28" height="26" class="combo"/>
 <text x="56" y="174" class="combo tap">`</text>
 </g>
-<g class="combo combopos-2">
+<g class="combo combopos-3">
 <rect rx="6" ry="6" x="714" y="23" width="28" height="26" class="combo"/>
 <text x="728" y="36" class="combo tap">-</text>
 </g>
-<g class="combo combopos-3">
+<g class="combo combopos-4">
 <rect rx="6" ry="6" x="770" y="49" width="28" height="26" class="combo"/>
 <text x="784" y="62" class="combo tap">\</text>
 </g>
-<g class="combo combopos-4">
+<g class="combo combopos-5">
 <rect rx="6" ry="6" x="770" y="105" width="28" height="26" class="combo"/>
 <text x="784" y="118" class="combo tap">&#x27;</text>
 </g>
-<g class="combo combopos-5">
+<g class="combo combopos-6">
 <rect rx="6" ry="6" x="714" y="135" width="28" height="26" class="combo"/>
 <text x="728" y="148" class="combo tap">[</text>
 </g>
-<g class="combo combopos-6">
+<g class="combo combopos-7">
 <rect rx="6" ry="6" x="770" y="161" width="28" height="26" class="combo"/>
 <text x="784" y="174" class="combo tap">]</text>
 </g>
@@ -551,9 +555,15 @@ path.combo {
 </g>
 <g transform="translate(812, 134)" class="key keypos-19">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-0.6em">Auto</tspan><tspan x="0" dy="1.2em">corr</tspan>
+</text>
 </g>
 <g transform="translate(28, 190)" class="key keypos-20">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-0.6em">OS</tspan><tspan x="0" dy="1.2em">mode</tspan>
+</text>
 </g>
 <g transform="translate(84, 157)" class="key keypos-21">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -618,4 +628,4 @@ path.combo {
 </g>
 </g>
 </g>
-<text x="870.0" y="1004.0" class="footer">my_skeletyl (QMK) v3.5 · small label = hold · blue = combo · Shift on opposite hand</text></svg>
+<text x="870.0" y="1004.0" class="footer">my_skeletyl (QMK) v3.6 · small label = hold · blue = combo · Shift on opposite hand</text></svg>

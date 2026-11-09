@@ -7,7 +7,14 @@
 #define OLED_BRIGHTNESS 64
 #define OLED_UPDATE_INTERVAL 40
 #define USB_POLLING_INTERVAL_MS 1
-#define MAX_DEFERRED_EXECUTORS 10
+
+// --- Trimmed 6x8 OLED font (printable ASCII + arrow + 12x16 Apple/Tux icons) ---
+#define OLED_FONT_H "oled_font.h"
+#define OLED_FONT_START 32
+#define OLED_FONT_END 135
+
+// --- Flash diet: 3 layers fit in 8-bit layer mask ---
+#define LAYER_STATE_8BIT
 
 // --- Tap-hold: mirrors the ZMK config (balanced flavor + positional mods) ---
 #define TAPPING_TERM 200
@@ -15,7 +22,10 @@
 #define CHORDAL_HOLD          // opposite-hand rule for home-row mods
 #define QUICK_TAP_TERM_PER_KEY
 
-// --- Combos (Kinesis-position symbols) ---
+// --- Caps Word: hold both home-row Shifts (A + ;) ---
+#define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
+
+// --- Combos (Kinesis-position symbols + A+S = Esc) ---
 #define COMBO_TERM 40
 #define COMBO_TERM_PER_COMBO
 #define COMBO_SHOULD_TRIGGER
@@ -23,3 +33,6 @@
 
 // --- Sentence case (getreuer/sentence_case) ---
 #define SENTENCE_CASE_TIMEOUT 2000
+
+// --- User EEPROM datablock for persisting learned typos & OS mode ---
+#define EECONFIG_USER_DATA_SIZE 64

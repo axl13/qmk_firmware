@@ -113,8 +113,12 @@ layers:
   - Vol −
   - Vol +
   - Play
-  - ''
-  - ''
+  - 'Auto
+
+    corr'
+  - 'OS
+
+    mode'
   - ''
   - Home
   - End
@@ -137,6 +141,12 @@ combos:
   - 0
   - 1
   k: '='
+  l:
+  - Base
+- p:
+  - 10
+  - 11
+  k: Esc
   l:
   - Base
 - p:
