@@ -42,7 +42,7 @@ on the **opposite** hand:
 - **Caps Word** (`BOTH_SHIFTS_TURNS_ON_CAPS_WORD`): hold both home-row Shifts (`A + ;`) to capitalise `CONST_NAMES` until the next space/delimiter.
 - **Autocorrect** (`AUTOCORRECT_ENABLE`): 221-entry personal + programming dictionary (`autocorrect_dict.txt`), active on Base layer only. Toggle with **Function + `;`** (`AC_TOGG`). Shows an `// AC INTERCEPT [OK]` toast on the OLED.
 - **On-device Typo Learner**: tracks manual `word → Backspace → fixed_word` corrections in RAM and saves the top 3 recurring pairs to EEPROM (`// LEARNED TYPOS` on idle screen) so you can promote them into `autocorrect_dict.txt`.
-- **OS Detection & Mac ↔ Linux Modifier Swap** (`OS_DETECTION_ENABLE`): auto-detects macOS (` MAC`) vs Linux/Windows (`🐧 LNX`) on USB plug-in and swaps `Ctrl ↔ Cmd` (`D/K` and thumb `Cmd`) so muscle memory stays identical across platforms. **Function + `Z`** (`OS_TOGG`) cycles `MAC` → `LNX` (full `Ctrl↔Cmd`) → `L-T` (thumb `Cmd→Ctrl` only).
+- **OS Detection & Mac ↔ Linux Modifier Swap** (`OS_DETECTION_ENABLE`): auto-detects macOS (` MAC`) vs Linux/Windows (`🐧 LNX`) on USB plug-in and swaps `Ctrl ↔ Cmd` (`D/K` and thumb `Cmd`) so muscle memory stays identical across platforms. **Function + `Z`** (`OS_MODE`) cycles `MAC` → `LNX` (full `Ctrl↔Cmd`) → `L-T` (thumb `Cmd→Ctrl` only).
 - **Sentence case** ([getreuer/sentence_case](https://getreuer.info/posts/keyboards/sentence-case))
   capitalises the first letter after `. ! ?`. Toggle it with **Function + `G`**.
 - **Function + `R`** resets the OLED statistics and clears learned typos.

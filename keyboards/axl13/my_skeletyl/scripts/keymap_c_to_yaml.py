@@ -34,7 +34,7 @@ LABELS = {
     "RESET_STATS": "Reset\nstats",
     "SENTENCE_CASE_TOGGLE": "Sent.\ncase",
     "AC_TOGG": "Auto\ncorr",
-    "OS_TOGG": "OS\nmode",
+    "OS_MODE": "OS\nmode",
     "QK_BOOT": "Boot",
 }
 MODS = {

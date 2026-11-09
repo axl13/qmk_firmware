@@ -33,7 +33,7 @@ enum layers {
 
 enum custom_keycodes {
     RESET_STATS = SAFE_RANGE,
-    OS_TOGG,
+    OS_MODE,
 };
 
 // Home-row mods (macOS: GUI = Cmd, ALT = Option)
@@ -73,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_FUNCTION] = LAYOUT_split_3x5_3(
         KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,        KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,
         KC_F11,  KC_F12,  EURO,  RESET_STATS, SC_TOGG,    KC_MUTE, KC_VOLD, KC_VOLU, KC_MPLY, AC_TOGG,
-        OS_TOGG, XXXXXXX, KC_HOME, KC_END,  XXXXXXX,      KC_INS,  KC_PGUP, KC_PGDN, KC_BRID, KC_BRIU,
+        OS_MODE, XXXXXXX, KC_HOME, KC_END,  XXXXXXX,      KC_INS,  KC_PGUP, KC_PGDN, KC_BRID, KC_BRIU,
                           KC_DEL,  KC_LCTL, KC_END,       _______, _______, KC_SPC
     ),
 };
@@ -423,7 +423,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (record->event.pressed) reset_statistics();
         return false;
     }
-    if (keycode == OS_TOGG) {
+    if (keycode == OS_MODE) {
         if (record->event.pressed) {
             current_os_mode = (current_os_mode + 1) % 3;
         }
