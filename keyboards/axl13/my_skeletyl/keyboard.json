@@ -4,7 +4,7 @@
     "manufacturer": "axl13",
     "maintainer": "axl13",
     "processor": "atmega32u4",
-    "bootloader": "atmel-dfu",
+    "bootloader": "caterina",
     "usb": {
         "vid": "0xFEED",
         "pid": "0x1830",
