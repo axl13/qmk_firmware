@@ -21,6 +21,32 @@ owner explicitly asks:
 - the OLED code in `keymaps/default/keymap.c` (OS pod, WPM, keystroke trace,
   autocorrect toast, layer view, idle scope)
 
+## Rule: always keep the QMK and ZMK Skeletyl in sync
+
+The owner types on two Skeletyls: this hand-wired QMK one and a wireless ZMK
+one (<https://github.com/axl13/zmk-config-bkb>, `config/skeletyl_v2.keymap`).
+Any change to layers, combos, tap-hold behaviour or timing made in one repo
+**must** be made in the other in the same piece of work, with both diagrams
+regenerated. Don't report a layout change as done until both repos have it.
+The ZMK repo on GitHub is the tested reference; start from its `master`, not
+from an old local clone.
+
+| Feature | QMK (`keymaps/default/keymap.c`, `config.h`) | ZMK (`config/skeletyl_v2.keymap`) |
+|---|---|---|
+| Positional home-row mods | `CHORDAL_HOLD` + `PERMISSIVE_HOLD`, `TAPPING_TERM 200` | `bhm_*` / `bhs_*`: `balanced`, `hold-trigger-key-positions`, 200 ms |
+| Typing window (mod pressed right after a key = tap) | `FLOW_TAP_TERM 150`; 80 for Shift in `get_flow_tap_term()` | `require-prior-idle-ms` 150 on `bhm_*`, 80 on `bhs_*` |
+| Caps Word, hold `A` + `;` | `BOTH_SHIFTS_TURNS_ON_CAPS_WORD` | `combo_caps` + `cw_ht` |
+| Combo windows | `COMBO_TERM 40`; 25 for `I+O`, `A+S`; `COMBO_PRIOR_IDLE_MS 150` for `O+P`, `.+/` | `timeout-ms`, `require-prior-idle-ms` per combo |
+| Layer-tap thumbs | `get_quick_tap_term()` 175 | `&lt` `quick-tap-ms` 175 |
+| Sentence case | `getreuer/sentence_case` module | `zmk-sentence-case` module |
+
+Intentional differences (do not "fix" them):
+
+- Function-layer hardware keys. ZMK: Bluetooth, Studio unlock, ext power, soft
+  off. QMK: autocorrect toggle (Fn+;), OS mode (Fn+Z), sentence-case toggle
+  (Fn+G).
+- QMK only: Autocorrect, OS detection with the Ctrl/Cmd swap, the OLED.
+
 ## Rule: every layout change ships with a fresh printable diagram
 
 Whenever `keymaps/default/keymap.c` (layers, combos, tap-hold) changes, in the
