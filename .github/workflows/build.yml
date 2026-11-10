@@ -2,22 +2,22 @@ name: 'Build Skeletyl Firmware'
 
 # Builds keyboards/axl13/my_skeletyl against the LATEST QMK release tag
 # (not this fork's master), so firmware always tracks current QMK.
+#
+# Manual only: start it from the Actions tab ("Run workflow") or with a
+# workflow_dispatch API call. Pushes do not start a build.
 
 on:
-  push:
-    paths:
-      - 'keyboards/axl13/**'
-      - '.github/workflows/build.yml'
-  pull_request:
-    paths:
-      - 'keyboards/axl13/**'
-      - '.github/workflows/build.yml'
   workflow_dispatch:
     inputs:
       qmk_ref:
         description: 'QMK tag/branch to build against (empty = latest release)'
         required: false
         default: ''
+
+# A newer manual run replaces one that is still in progress.
+concurrency:
+  group: build-skeletyl-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   KEYBOARD: axl13/my_skeletyl

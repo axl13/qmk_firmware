@@ -48,8 +48,10 @@ on the **opposite** hand:
 
 ## Build
 
-GitHub Actions builds this keyboard against the **latest QMK release**; the
-`.hex` is attached to each run as an artifact.
+The **Build Skeletyl Firmware** workflow builds this keyboard against the
+**latest QMK release**. It is manual: start it from the Actions tab
+(Run workflow); pushes do not trigger it. The `.hex` is attached to the run as
+an artifact.
 
 ## Flash
 

@@ -33,13 +33,23 @@ same commit:
    raw QMK names where a symbol is expected. If one shows, add it to `LABELS`
    in `scripts/keymap_c_to_yaml.py` and re-run.
 3. Update `keyboards/axl13/my_skeletyl/readme.md` if combos or layers changed.
-4. Commit and push, then confirm the **Build Skeletyl Firmware** workflow
-   succeeds. It builds against the latest QMK release tag. Check the firmware
-   size in the job summary; the ATmega32U4 has 28 KB with Caterina.
+4. Commit and push, then start the **Build Skeletyl Firmware** workflow by
+   hand (Actions tab -> Run workflow, or a `workflow_dispatch` API call) and
+   confirm it succeeds. Pushes do not start a build. It builds against the
+   latest QMK release tag. Check the firmware size in the job summary; the
+   ATmega32U4 has 28 KB with Caterina. Batch changes: one build per set of
+   changes, not one per commit.
 
 Never hand-edit the generated `assets/my_skeletyl_keymap.*` files.
 
 ## Build notes
+
+- GitHub Actions on this fork: only `build.yml` is enabled and it is
+  manual-only. Every workflow inherited from upstream QMK is disabled in the
+  repository settings (Actions tab). After syncing with upstream, disable any
+  new workflow it brings in. GitHub switched Actions off for the whole fork
+  once (2026-11-10), citing compute wasted by workflows inherited from
+  upstream.
 
 - CI checks out `qmk/qmk_firmware` at the newest release tag, overlays
   `keyboards/axl13/`, and adds `getreuer/qmk-modules` (sentence case) pinned
