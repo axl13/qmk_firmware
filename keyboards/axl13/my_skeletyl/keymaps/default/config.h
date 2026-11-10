@@ -21,6 +21,7 @@
 #define PERMISSIVE_HOLD
 #define CHORDAL_HOLD          // opposite-hand rule for home-row mods
 #define QUICK_TAP_TERM_PER_KEY
+#define FLOW_TAP_TERM 150     // home-row mod pressed <150 ms after a typing key = tap (80 ms for Shift, see keymap.c)
 
 // --- Caps Word: hold both home-row Shifts (A + ;) ---
 #define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
