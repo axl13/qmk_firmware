@@ -291,6 +291,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             wpm_buckets[wpm_bucket_idx]++;
         }
         ecg_spike_phase = 1; // trigger QRS spike on the OLED ECG trace
+
+        // Sentence case (a module, it runs just before this) capitalises with a
+        // one-shot Left Shift. If a Shift is also held by hand, drop the one-shot:
+        // QMK counts the pair as "both Shifts" and turns Caps Word on, which
+        // typed "aND" instead of "And". The held Shift capitalises the letter.
+        if ((get_mods() & MOD_MASK_SHIFT) && get_oneshot_mods()) {
+            clear_oneshot_mods();
+        }
     }
 
     if (keycode == OS_MODE) {
