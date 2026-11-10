@@ -2,7 +2,7 @@
 
 - **Keyboard:** Skeletyl, hand-wired (ATmega32U4 / Pro Micro, Caterina)
 - **Split:** soft serial on D2, left half is master
-- **OLED:** SH1106 128×32 Cyberpunk HUD (OS pod /🐧, 2× WPM, rolling tap `ms`, 64-px keystroke ECG, active `AC`/`CW` & held-mod status, autocorrect intercept toast, Layer X-Ray, on-device typo learner, dual-trace idle oscilloscope)
+- **OLED:** SH1106 128×32 Cyberpunk HUD (OS pod /🐧, 2× WPM, 64-px keystroke ECG, active `AC`/`CW` & held-mod status, autocorrect intercept toast, Layer X-Ray, dual-trace idle oscilloscope)
 - **Maintainer:** axl13
 
 Same layout as the ZMK Skeletyl in
@@ -40,12 +40,10 @@ on the **opposite** hand:
 - **Home-row mods** use QMK Chordal Hold: a mod only holds when the next key
   is on the other hand or a thumb.
 - **Caps Word** (`BOTH_SHIFTS_TURNS_ON_CAPS_WORD`): hold both home-row Shifts (`A + ;`) to capitalise `CONST_NAMES` until the next space/delimiter.
-- **Autocorrect** (`AUTOCORRECT_ENABLE`): 221-entry personal + programming dictionary (`autocorrect_dict.txt`), active on Base layer only. Toggle with **Function + `;`** (`AC_TOGG`). Shows an `// AC INTERCEPT [OK]` toast on the OLED.
-- **On-device Typo Learner**: tracks manual `word → Backspace → fixed_word` corrections in RAM and saves the top 3 recurring pairs to EEPROM (`// LEARNED TYPOS` on idle screen) so you can promote them into `autocorrect_dict.txt`.
+- **Autocorrect** (`AUTOCORRECT_ENABLE`): personal + programming dictionary (`autocorrect_dict.txt`, compiled in at build time), active on Base layer only. Toggle with **Function + `;`** (`AC_TOGG`). Shows an `// AC INTERCEPT [OK]` toast on the OLED.
 - **OS Detection & Mac ↔ Linux Modifier Swap** (`OS_DETECTION_ENABLE`): auto-detects macOS (` MAC`) vs Linux/Windows (`🐧 LNX`) on USB plug-in and swaps `Ctrl ↔ Cmd` (`D/K` and thumb `Cmd`) so muscle memory stays identical across platforms. **Function + `Z`** (`OS_MODE`) cycles `MAC` → `LNX` (full `Ctrl↔Cmd`) → `L-T` (thumb `Cmd→Ctrl` only).
 - **Sentence case** ([getreuer/sentence_case](https://getreuer.info/posts/keyboards/sentence-case))
   capitalises the first letter after `. ! ?`. Toggle it with **Function + `G`**.
-- **Function + `R`** resets the OLED statistics and clears learned typos.
 - **€** is **Function + `D`** (macOS US layout).
 
 ## Build

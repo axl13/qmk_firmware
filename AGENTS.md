@@ -18,8 +18,8 @@ owner explicitly asks:
 - `keyboards/axl13/my_skeletyl/keyboard.json` (matrix pins, diode direction, split, OLED driver)
 - `keyboards/axl13/my_skeletyl/rules.mk` (MCU, bootloader, debounce)
 - in `keymaps/default/config.h`, the block marked "Hand-wired split + OLED"
-- the OLED code in `keymaps/default/keymap.c` (histogram, average tap time,
-  idle wave, `RESET_STATS`)
+- the OLED code in `keymaps/default/keymap.c` (OS pod, WPM, keystroke trace,
+  autocorrect toast, layer view, idle scope)
 
 ## Rule: every layout change ships with a fresh printable diagram
 

@@ -31,7 +31,6 @@ LABELS = {
     "KC_MUTE": "Mute", "KC_VOLD": "Vol −", "KC_VOLU": "Vol +", "KC_MPLY": "Play",
     "KC_BRID": "Brt −", "KC_BRIU": "Brt +",
     "LALT(LSFT(KC_2))": "€",
-    "RESET_STATS": "Reset\nstats",
     "SENTENCE_CASE_TOGGLE": "Sent.\ncase",
     "AC_TOGG": "Auto\ncorr",
     "OS_MODE": "OS\nmode",

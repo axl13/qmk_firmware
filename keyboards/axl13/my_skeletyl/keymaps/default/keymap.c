@@ -8,19 +8,18 @@
 //   next key is on the other hand or a thumb.
 //   Caps Word: hold both home-row Shifts (A + ;).
 //   Sentence case: getreuer/sentence_case community module (keymap.json).
-//   Autocorrect: 221-entry dictionary (Base layer only), toggle on Fn + ;.
+//   Autocorrect: autocorrect_dict.txt (Base layer only), toggle on Fn + ;.
 //   OS Detection: auto Mac/Linux logo + Ctrl<->GUI swap, cycle on Fn + Z.
 //
 // OLED (128x32 SH1106, Cyberpunk Telemetry HUD):
-//   - Active typing: framed OS icon (Apple/Tux), 2x 7-seg WPM + tap ms,
+//   - Active typing: framed OS icon (Apple/Tux), 2x 7-seg WPM,
 //     live scrolling keystroke ECG waveform, layer/AC/CW/mod status stack.
 //   - Autocorrect toast: full-screen "// AC INTERCEPT" card for 1.5 s.
 //   - Layer X-Ray: live symbol/function map when holding Sym/Fn thumb.
-//   - Idle (after 15 s): alternates "// LEARNED TYPOS" log & dual-trace scope.
+//   - Idle (after 15 s): dual-trace scope.
 
 #include QMK_KEYBOARD_H
 #include <string.h>
-#include <avr/eeprom.h>
 
 #ifdef OS_DETECTION_ENABLE
 #    include "os_detection.h"
@@ -33,8 +32,7 @@ enum layers {
 };
 
 enum custom_keycodes {
-    RESET_STATS = SAFE_RANGE,
-    OS_MODE,
+    OS_MODE = SAFE_RANGE,
 };
 
 // Home-row mods (macOS: GUI = Cmd, ALT = Option)
@@ -73,7 +71,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_FUNCTION] = LAYOUT_split_3x5_3(
         KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,        KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,
-        KC_F11,  KC_F12,  EURO,  RESET_STATS, SC_TOGG,    KC_MUTE, KC_VOLD, KC_VOLU, KC_MPLY, AC_TOGG,
+        KC_F11,  KC_F12,  EURO,    XXXXXXX, SC_TOGG,      KC_MUTE, KC_VOLD, KC_VOLU, KC_MPLY, AC_TOGG,
         OS_MODE, XXXXXXX, KC_HOME, KC_END,  XXXXXXX,      KC_INS,  KC_PGUP, KC_PGDN, KC_BRID, KC_BRIU,
                           KC_DEL,  KC_LCTL, KC_END,       _______, _______, KC_SPC
     ),
@@ -215,32 +213,10 @@ bool process_detected_host_os_user(os_variant_t detected_os) {
 #endif
 
 // ---------------------------------------------------------------------------
-// Telemetry, Autocorrect Intercept & On-Device Typo Learner
+// Telemetry & Autocorrect Intercept
 // ---------------------------------------------------------------------------
 #define IDLE_TIMEOUT 15000     // 15 s before idle screen
 #define INTERCEPT_MS 1600      // show "// AC INTERCEPT" card for 1.6 s
-#define LEARNED_SLOTS 5        // persisted in 64-byte user EEPROM datablock
-#define WORD_MAX 8
-
-typedef struct {
-    char    typo[WORD_MAX];
-    char    fix[WORD_MAX];
-    uint8_t count;
-} learned_entry_t;
-
-typedef struct {
-    uint8_t         magic;
-    uint8_t         ac_hits;
-    learned_entry_t entries[3]; // 2 + 3 * 17 = 53 bytes (fits in 64B datablock)
-} persisted_log_t;
-
-#define LOG_MAGIC 0xA7
-#define LOG_EEPROM_ADDR ((void *)960)
-
-static learned_entry_t learned_typos[3];
-static uint8_t         ac_hit_count     = 0;
-static bool            eeprom_dirty     = false;
-static bool            eeprom_flushed   = true;
 
 // Intercept toast state
 static char     intercept_typo[12];
@@ -248,11 +224,7 @@ static char     intercept_fix[12];
 static uint16_t intercept_timer    = 0;
 static bool     intercept_active   = false;
 
-// Live typing telemetry (rolling WPM, tap duration, ECG pulse ring)
 static uint32_t last_activity_timer = 0;
-static uint16_t press_Timer         = 0;
-static uint32_t total_tap_time      = 0;
-static uint16_t total_tap_count     = 0;
 
 // 8 buckets x 625 ms = 5-second rolling window for integer WPM (zero float)
 static uint8_t  wpm_buckets[8];
@@ -266,72 +238,6 @@ static uint8_t  ecg_head            = 0;
 static uint8_t  ecg_spike_phase     = 0;
 static const int8_t PROGMEM ecg_kernel[6] = {-2, 6, -9, 4, -1, 0};
 
-// Backspace-correction detector state
-static char    cur_word[12];
-static uint8_t cur_len        = 0;
-static char    erased_typo[12];
-static uint8_t erased_at_len  = 0;
-static uint8_t bspc_streak    = 0;
-
-static void record_learned_pair(const char *typo, const char *fix) {
-    if ( strcmp(typo, fix) == 0 ) return;
-    uint8_t tl = strlen(typo), fl = strlen(fix);
-    if (tl < 3 || fl < 3 || tl >= WORD_MAX || fl >= WORD_MAX) return;
-
-    int8_t min_idx = 0;
-    for (uint8_t i = 0; i < 3; i++) {
-        if (learned_typos[i].count > 0 &&
-            strncmp(learned_typos[i].typo, typo, WORD_MAX - 1) == 0 &&
-            strncmp(learned_typos[i].fix, fix, WORD_MAX - 1) == 0) {
-            if (learned_typos[i].count < 250) learned_typos[i].count++;
-            eeprom_dirty = true;
-            eeprom_flushed = false;
-            return;
-        }
-        if (learned_typos[i].count < learned_typos[min_idx].count) {
-            min_idx = i;
-        }
-    }
-    strncpy(learned_typos[min_idx].typo, typo, WORD_MAX - 1);
-    learned_typos[min_idx].typo[WORD_MAX - 1] = '\0';
-    strncpy(learned_typos[min_idx].fix, fix, WORD_MAX - 1);
-    learned_typos[min_idx].fix[WORD_MAX - 1] = '\0';
-    learned_typos[min_idx].count = 1;
-    eeprom_dirty   = true;
-    eeprom_flushed = false;
-}
-
-static void learner_feed_key(uint16_t kc, uint8_t mods) {
-    if (mods & (MOD_MASK_CTRL | MOD_MASK_GUI | MOD_MASK_ALT)) {
-        cur_len = 0; erased_typo[0] = '\0'; bspc_streak = 0;
-        return;
-    }
-    if (kc >= KC_A && kc <= KC_Z) {
-        if (cur_len < sizeof(cur_word) - 1) {
-            cur_word[cur_len++] = 'a' + (kc - KC_A);
-            cur_word[cur_len]   = '\0';
-        }
-        bspc_streak = 0;
-    } else if (kc == KC_BSPC) {
-        if (cur_len > 0) {
-            if (bspc_streak == 0 && cur_len >= 3 && cur_len < WORD_MAX) {
-                memcpy(erased_typo, cur_word, cur_len + 1);
-                erased_at_len = cur_len;
-            }
-            cur_word[--cur_len] = '\0';
-            bspc_streak++;
-        }
-    } else if (kc == KC_SPC || kc == KC_ENT || kc == KC_DOT || kc == KC_COMM) {
-        if (erased_typo[0] != '\0' && erased_at_len >= 3 && cur_len >= 3 && cur_len < WORD_MAX) {
-            record_learned_pair(erased_typo, cur_word);
-        }
-        cur_len = 0; cur_word[0] = '\0';
-        erased_typo[0] = '\0'; bspc_streak = 0;
-    } else if (kc != KC_LSFT && kc != KC_RSFT) {
-        cur_len = 0; erased_typo[0] = '\0'; bspc_streak = 0;
-    }
-}
-
 #ifdef AUTOCORRECT_ENABLE
 // Only run Autocorrect on the Base layer.
 bool process_autocorrect_user(uint16_t *keycode, keyrecord_t *record, uint8_t *typo_buffer_size, uint8_t *mods) {
@@ -342,6 +248,7 @@ bool process_autocorrect_user(uint16_t *keycode, keyrecord_t *record, uint8_t *t
     return process_autocorrect_default_handler(keycode, record, typo_buffer_size, mods);
 }
 
+// Remember the corrected pair for the OLED toast, then let QMK apply it.
 bool apply_autocorrect(uint8_t backspaces, const char *str, char *typo, char *correct) {
     strncpy(intercept_typo, typo, sizeof(intercept_typo) - 1);
     intercept_typo[sizeof(intercept_typo) - 1] = '\0';
@@ -349,57 +256,13 @@ bool apply_autocorrect(uint8_t backspaces, const char *str, char *typo, char *co
     intercept_fix[sizeof(intercept_fix) - 1] = '\0';
     intercept_timer  = timer_read();
     intercept_active = true;
-    if (ac_hit_count < 250) ac_hit_count++;
-    eeprom_dirty   = true;
-    eeprom_flushed = false;
-    // Clear manual learner state so an autocorrect doesn't look like a manual backspace fix
-    cur_len = 0; erased_typo[0] = '\0'; bspc_streak = 0;
     return true;
 }
 #endif
 
-static void save_log_to_eeprom(void) {
-    persisted_log_t data;
-    data.magic   = LOG_MAGIC;
-    data.ac_hits = ac_hit_count;
-    memcpy(data.entries, learned_typos, sizeof(learned_typos));
-    eeprom_update_block(&data, LOG_EEPROM_ADDR, sizeof(data));
-    eeprom_dirty   = false;
-    eeprom_flushed = true;
-}
-
-static void load_log_from_eeprom(void) {
-    persisted_log_t data;
-    eeprom_read_block(&data, (const void *)LOG_EEPROM_ADDR, sizeof(data));
-    if (data.magic == LOG_MAGIC) {
-        ac_hit_count = data.ac_hits;
-        memcpy(learned_typos, data.entries, sizeof(learned_typos));
-    }
-}
-
-static void reset_statistics(void) {
-    total_tap_time  = 0;
-    total_tap_count = 0;
-    ac_hit_count    = 0;
-    memset(wpm_buckets, 0, sizeof(wpm_buckets));
-    memset(learned_typos, 0, sizeof(learned_typos));
-    save_log_to_eeprom();
-}
-
-static uint16_t base_tap_keycode(uint16_t keycode, keyrecord_t *record) {
-    if (IS_QK_MOD_TAP(keycode)) {
-        return record->tap.count ? QK_MOD_TAP_GET_TAP_KEYCODE(keycode) : KC_NO;
-    }
-    if (IS_QK_LAYER_TAP(keycode)) {
-        return record->tap.count ? QK_LAYER_TAP_GET_TAP_KEYCODE(keycode) : KC_NO;
-    }
-    return keycode;
-}
-
 void keyboard_post_init_user(void) {
     last_activity_timer = timer_read32();
     wpm_bucket_timer    = timer_read();
-    load_log_from_eeprom();
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -407,36 +270,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     if (record->event.pressed) {
         last_key_press_time = timer_read();
-        press_Timer         = record->event.time;
         if (wpm_buckets[wpm_bucket_idx] < 250) {
             wpm_buckets[wpm_bucket_idx]++;
         }
         ecg_spike_phase = 1; // trigger QRS spike on the OLED ECG trace
-    } else if (press_Timer != 0) {
-        uint16_t dt = timer_elapsed(press_Timer);
-        if (dt < 500) {
-            total_tap_time += dt;
-            total_tap_count++;
-        }
-        press_Timer = 0;
     }
 
-    if (keycode == RESET_STATS) {
-        if (record->event.pressed) reset_statistics();
-        return false;
-    }
     if (keycode == OS_MODE) {
         if (record->event.pressed) {
             current_os_mode = (current_os_mode + 1) % 3;
         }
         return false;
-    }
-
-    if (record->event.pressed && get_highest_layer(layer_state) == _BASE) {
-        uint16_t tkc = base_tap_keycode(keycode, record);
-        if (tkc != KC_NO) {
-            learner_feed_key(tkc, get_mods());
-        }
     }
     return true;
 }
@@ -495,24 +339,6 @@ static void draw_big_digit(uint8_t x, uint8_t y, uint8_t d) {
     if (s & 0x40) { draw_hline(x + 1, x + 6, y + 6);  draw_hline(x + 1, x + 6, y + 7); }
 }
 
-// Tiny unsigned integer formatter (replaces 1.2 KB snprintf/vfprintf)
-static void fmt_u16(char *buf, uint16_t val, const char *suffix) {
-    char tmp[5];
-    uint8_t n = 0;
-    if (val == 0) {
-        tmp[n++] = '0';
-    } else {
-        while (val > 0 && n < 5) {
-            tmp[n++] = '0' + (val % 10);
-            val /= 10;
-        }
-    }
-    uint8_t p = 0;
-    while (n > 0) buf[p++] = tmp[--n];
-    while (*suffix) buf[p++] = *suffix++;
-    buf[p] = '\0';
-}
-
 static void draw_os_pod(void) {
     draw_corners(0, 0, 19, 21, 3);
     bool mac = (current_os_mode == OS_MODE_MAC);
@@ -554,7 +380,7 @@ static void tick_telemetry(void) {
 static void render_cyber_deck(void) {
     draw_os_pod();
 
-    // Center pod: 2x 7-seg WPM + tap ms + scrolling ECG trace
+    // Center pod: 2x 7-seg WPM + scrolling ECG trace
     uint8_t w = current_wpm;
     if (w >= 100) {
         draw_big_digit(25, 1, 1);
@@ -565,13 +391,6 @@ static void render_cyber_deck(void) {
 
     oled_set_cursor(8, 0);
     oled_write_P(PSTR("WPM"), false);
-
-    uint16_t avg_ms = (total_tap_count > 0) ? (uint16_t)(total_tap_time / total_tap_count) : 0;
-    if (avg_ms > 999) avg_ms = 999;
-    char ms_buf[8];
-    fmt_u16(ms_buf, avg_ms, "ms");
-    oled_set_cursor(8, 1);
-    oled_write(ms_buf, false);
 
     uint8_t prev_y = 26;
     for (uint8_t i = 0; i < 64; i++) {
@@ -643,39 +462,9 @@ static void render_layer_xray(uint8_t layer) {
         oled_write_P(PSTR("FN LAYER"), false);
         draw_hline(24, 127, 8);
         oled_set_cursor(4, 2);
-        oled_write_P(PSTR("F1-12 EUR RST SC"), false);
+        oled_write_P(PSTR("F1-12  EUR  SC"), false);
         oled_set_cursor(4, 3);
         oled_write_P(PSTR("OS:Z  AC:; MEDIA"), false);
-    }
-}
-
-static void render_learned_log(void) {
-    oled_set_cursor(0, 0);
-    oled_write_P(PSTR("// LEARNED TYPOS"), false);
-    char acbuf[8];
-    fmt_u16(acbuf, ac_hit_count, "");
-    oled_set_cursor(17, 0);
-    oled_write_P(PSTR("AC:"), false);
-    oled_write(acbuf, false);
-    draw_hline(0, 127, 8);
-
-    bool any = false;
-    for (uint8_t i = 0; i < 3; i++) {
-        if (learned_typos[i].count == 0) continue;
-        any = true;
-        oled_set_cursor(0, 1 + i);
-        oled_write(learned_typos[i].typo, false);
-        oled_write_char(GLYPH_ARROW, false);
-        oled_write(learned_typos[i].fix, false);
-        char cbuf[6];
-        cbuf[0] = 'x';
-        fmt_u16(cbuf + 1, learned_typos[i].count, "");
-        oled_set_cursor(18, 1 + i);
-        oled_write(cbuf, false);
-    }
-    if (!any) {
-        oled_set_cursor(1, 2);
-        oled_write_P(PSTR("No repeat typos yet"), false);
     }
 }
 
@@ -716,15 +505,7 @@ bool oled_task_user(void) {
 
     uint32_t idle_ms = timer_elapsed32(last_activity_timer);
     if (idle_ms > IDLE_TIMEOUT) {
-        if (eeprom_dirty && !eeprom_flushed) {
-            save_log_to_eeprom();
-        }
-        // Alternate every ~6 seconds between Learned Typos log and Dual-Trace Scope
-        if (((idle_ms >> 12) & 1) == 0) {
-            render_learned_log();
-        } else {
-            render_idle_scope();
-        }
+        render_idle_scope();
         return false;
     }
 
