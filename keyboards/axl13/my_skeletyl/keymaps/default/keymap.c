@@ -6,8 +6,8 @@
 //            Shift on the OPPOSITE hand gives + ~ _ | " { }
 //   Home-row mods are positional (Chordal Hold): a mod only holds when the
 //   next key is on the other hand or a thumb.
-//   Flow Tap: a home-row mod pressed right after another typing key is a tap
-//   (150 ms window; 80 ms for the two Shift keys).
+//   Flow Tap: Ctrl/Cmd/Alt home-row mods pressed right after another typing
+//   key are taps (150 ms window). Not applied to the two Shift keys.
 //   Caps Word: hold both home-row Shifts (A + ;).
 //   Sentence case: getreuer/sentence_case community module (keymap.json).
 //   Autocorrect: autocorrect_dict.txt (Base layer only), toggle on Fn + ;.
@@ -158,20 +158,17 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-// Flow Tap (QMK built-in): while typing, home-row mods are sent as letters at
-// once. Shift is the only home-row mod used often, so it gets a shorter window
-// and still works for a capital right after a word.
-#define FLOW_TAP_TERM_SHIFT 80
-
+// Flow Tap (QMK built-in): while typing, the Ctrl/Cmd/Alt home-row mods are
+// sent as letters at once. The two Shift keys are excluded: with a window (80 ms
+// was tried) a capital right after a space came out as ";d".
 uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_keycode) {
+    switch (keycode) {
+        case HM_A:
+        case HM_SCLN:
+            return 0;
+    }
     if (is_flow_tap_key(keycode) && is_flow_tap_key(prev_keycode)) {
-        switch (keycode) {
-            case HM_A:
-            case HM_SCLN:
-                return FLOW_TAP_TERM_SHIFT;
-            default:
-                return FLOW_TAP_TERM;
-        }
+        return FLOW_TAP_TERM;
     }
     return 0;
 }

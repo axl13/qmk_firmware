@@ -39,9 +39,10 @@ on the **opposite** hand:
 
 - **Home-row mods** use QMK Chordal Hold: a mod only holds when the next key
   is on the other hand or a thumb.
-- **Flow Tap** (`FLOW_TAP_TERM`): a home-row mod pressed within 150 ms of the
-  previous typing key is always a tap, so letters appear at once while typing.
-  The two Shift keys use 80 ms so a capital right after a word still works.
+- **Flow Tap** (`FLOW_TAP_TERM`): a Ctrl/Cmd/Alt home-row mod pressed within
+  150 ms of the previous typing key is always a tap, so those letters appear at
+  once while typing. The two Shift keys (`A`, `;`) are excluded so a capital
+  right after a space always works.
 - **Caps Word** (`BOTH_SHIFTS_TURNS_ON_CAPS_WORD`): hold both home-row Shifts (`A + ;`) to capitalise `CONST_NAMES` until the next space/delimiter.
 - **Autocorrect** (`AUTOCORRECT_ENABLE`): personal + programming dictionary (`autocorrect_dict.txt`, compiled in at build time), active on Base layer only. Toggle with **Function + `;`** (`AC_TOGG`). Shows an `// AC INTERCEPT [OK]` toast on the OLED.
 - **OS Detection & Mac ↔ Linux Modifier Swap** (`OS_DETECTION_ENABLE`): auto-detects macOS (` MAC`) vs Linux/Windows (`🐧 LNX`) on USB plug-in and swaps `Ctrl ↔ Cmd` (`D/K` and thumb `Cmd`) so muscle memory stays identical across platforms. **Function + `Z`** (`OS_MODE`) cycles `MAC` → `LNX` (full `Ctrl↔Cmd`) → `L-T` (thumb `Cmd→Ctrl` only).

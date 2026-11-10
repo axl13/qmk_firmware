@@ -34,7 +34,7 @@ from an old local clone.
 | Feature | QMK (`keymaps/default/keymap.c`, `config.h`) | ZMK (`config/skeletyl_v2.keymap`) |
 |---|---|---|
 | Positional home-row mods | `CHORDAL_HOLD` + `PERMISSIVE_HOLD`, `TAPPING_TERM 200` | `bhm_*` / `bhs_*`: `balanced`, `hold-trigger-key-positions`, 200 ms |
-| Typing window (mod pressed right after a key = tap) | `FLOW_TAP_TERM 150`; 80 for Shift in `get_flow_tap_term()` | `require-prior-idle-ms` 150 on `bhm_*`, 80 on `bhs_*` |
+| Typing window (mod pressed right after a key = tap) | `FLOW_TAP_TERM 150`; none for Shift (`get_flow_tap_term()` returns 0) | `require-prior-idle-ms` 150 on `bhm_*`; none on `bhs_*` (Shift) |
 | Caps Word, hold `A` + `;` | `BOTH_SHIFTS_TURNS_ON_CAPS_WORD` | `combo_caps` + `cw_ht` |
 | Combo windows | `COMBO_TERM 40`; 25 for `I+O`, `A+S`; `COMBO_PRIOR_IDLE_MS 150` for `O+P`, `.+/` | `timeout-ms`, `require-prior-idle-ms` per combo |
 | Layer-tap thumbs | `get_quick_tap_term()` 175 | `&lt` `quick-tap-ms` 175 |
