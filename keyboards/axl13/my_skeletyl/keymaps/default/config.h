@@ -8,6 +8,10 @@
 #define OLED_UPDATE_INTERVAL 40
 #define USB_POLLING_INTERVAL_MS 1
 
+// --- Debounce: 15 ms instead of QMK's default 5 (the T switch chatters and typed "tt").
+// With asym_eager_defer_pk a press still registers at once; only the release waits.
+#define DEBOUNCE 15
+
 // --- Trimmed 6x8 OLED font (printable ASCII + arrow + 12x16 Apple/Tux icons) ---
 #define OLED_FONT_H "oled_font.h"
 #define OLED_FONT_START 32
