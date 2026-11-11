@@ -292,7 +292,7 @@ bool apply_autocorrect(uint8_t backspaces, const char *str, char *typo, char *co
 #define LIGHTS_TIMEOUT_MS 10000
 
 static uint8_t  lights;       // last byte from the Mac
-static uint32_t lights_timer; // when it arrived
+static uint16_t lights_timer; // when it arrived
 
 static void lights_show(uint8_t two_bits) {
     gpio_write_pin(LIGHT_A, !(two_bits & 1));
@@ -306,14 +306,14 @@ static void lights_slave_handler(uint8_t in_len, const void *in, uint8_t out_len
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     if (data[0] == 'L') {
         lights       = data[1] & 0x0F;
-        lights_timer = timer_read32();
+        lights_timer = timer_read();
     }
 }
 
 void housekeeping_task_user(void) {
     static bool self_test_done = false;
     if (!self_test_done) {
-        uint32_t up = timer_read32();
+        uint16_t up = timer_read();
         if (up < 3000) {
             lights_show(up < 1500 ? 1 : 2);
             return;
@@ -323,7 +323,7 @@ void housekeeping_task_user(void) {
     }
     if (!is_keyboard_master()) return; // the right half is driven by lights_slave_handler
 
-    if (lights && timer_elapsed32(lights_timer) > LIGHTS_TIMEOUT_MS) {
+    if (lights && timer_elapsed(lights_timer) > LIGHTS_TIMEOUT_MS) {
         lights = 0;
     }
     lights_show(lights & 3);
@@ -384,14 +384,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 bool is_sentence_case_on(void); // getreuer/sentence_case module
 
 #define GLYPH_ARROW    ((char)0x7F)
-#define GLYPH_APPLE_TL ((char)0x80)
-#define GLYPH_APPLE_TR ((char)0x81)
-#define GLYPH_APPLE_BL ((char)0x82)
-#define GLYPH_APPLE_BR ((char)0x83)
-#define GLYPH_LINUX_TL ((char)0x84)
-#define GLYPH_LINUX_TR ((char)0x85)
-#define GLYPH_LINUX_BL ((char)0x86)
-#define GLYPH_LINUX_BR ((char)0x87)
+#define GLYPH_APPLE_TL ((char)0x80) // Apple logo: 0x80..0x83 = TL, TR, BL, BR
+#define GLYPH_LINUX_TL ((char)0x84) // Tux logo:   0x84..0x87
 
 // 16-entry quarter-sine lookup table (amplitude 0..9) for zero-float idle scope
 static const int8_t PROGMEM sin32_lut[32] = {
@@ -432,15 +426,20 @@ static void draw_big_digit(uint8_t x, uint8_t y, uint8_t d) {
     if (s & 0x40) { draw_hline(x + 1, x + 6, y + 6);  draw_hline(x + 1, x + 6, y + 7); }
 }
 
+// 12x16 Apple or Tux logo: four font cells starting at text column `col`, rows 0-1.
+static void draw_os_logo(uint8_t col) {
+    char g = (current_os_mode == OS_MODE_MAC) ? GLYPH_APPLE_TL : GLYPH_LINUX_TL;
+    oled_set_cursor(col, 0);
+    oled_write_char(g, false);
+    oled_write_char(g + 1, false);
+    oled_set_cursor(col, 1);
+    oled_write_char(g + 2, false);
+    oled_write_char(g + 3, false);
+}
+
 static void draw_os_pod(void) {
     draw_corners(0, 0, 19, 21, 3);
-    bool mac = (current_os_mode == OS_MODE_MAC);
-    oled_set_cursor(0, 0);
-    oled_write_char(mac ? GLYPH_APPLE_TL : GLYPH_LINUX_TL, false);
-    oled_write_char(mac ? GLYPH_APPLE_TR : GLYPH_LINUX_TR, false);
-    oled_set_cursor(0, 1);
-    oled_write_char(mac ? GLYPH_APPLE_BL : GLYPH_LINUX_BL, false);
-    oled_write_char(mac ? GLYPH_APPLE_BR : GLYPH_LINUX_BR, false);
+    draw_os_logo(0);
     oled_set_cursor(0, 3);
     oled_write_P(current_os_mode == OS_MODE_MAC ? PSTR("MAC") :
                  (current_os_mode == OS_MODE_LINUX_FULL ? PSTR("LNX") : PSTR("L-T")), false);
@@ -570,13 +569,7 @@ static void render_layer_xray(uint8_t layer) {
 
 static void render_idle_scope(void) {
     draw_corners(0, 0, 127, 31, 4);
-    bool mac = (current_os_mode == OS_MODE_MAC);
-    oled_set_cursor(1, 0);
-    oled_write_char(mac ? GLYPH_APPLE_TL : GLYPH_LINUX_TL, false);
-    oled_write_char(mac ? GLYPH_APPLE_TR : GLYPH_LINUX_TR, false);
-    oled_set_cursor(1, 1);
-    oled_write_char(mac ? GLYPH_APPLE_BL : GLYPH_LINUX_BL, false);
-    oled_write_char(mac ? GLYPH_APPLE_BR : GLYPH_LINUX_BR, false);
+    draw_os_logo(1);
     oled_set_cursor(16, 0);
     oled_write_P(PSTR("STBY"), false);
 
