@@ -2,7 +2,7 @@
 
 - **Keyboard:** Skeletyl, hand-wired (ATmega32U4 / Pro Micro, Caterina)
 - **Split:** soft serial on D2, left half is master
-- **OLED:** SH1106 128×32 Cyberpunk HUD (OS pod /🐧, 2× WPM, 64-px keystroke ECG, active `AC`/`CW` & held-mod status, autocorrect intercept toast, Layer X-Ray, dual-trace idle oscilloscope)
+- **OLED:** SH1106 128×32 Cyberpunk HUD (OS pod /🐧, 2× WPM, 64-px keystroke ECG, `AC`/`CW`/`SC` (autocorrect, Caps Word, sentence case) & held-mod status, autocorrect intercept toast, Layer X-Ray, dual-trace idle oscilloscope)
 - **Maintainer:** axl13
 
 Same layout as the ZMK Skeletyl in

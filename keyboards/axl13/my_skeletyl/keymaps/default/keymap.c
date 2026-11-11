@@ -15,7 +15,7 @@
 //
 // OLED (128x32 SH1106, Cyberpunk Telemetry HUD):
 //   - Active typing: framed OS icon (Apple/Tux), 2x 7-seg WPM,
-//     live scrolling keystroke ECG waveform, layer/AC/CW/mod status stack.
+//     live scrolling keystroke ECG waveform, layer/AC/CW/SC/mod status stack.
 //   - Autocorrect toast: full-screen "// AC INTERCEPT" card for 1.5 s.
 //   - Layer X-Ray: live symbol/function map when holding Sym/Fn thumb.
 //   - Idle (after 15 s): dual-trace scope.
@@ -315,6 +315,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // ---------------------------------------------------------------------------
 #ifdef OLED_ENABLE
 
+bool is_sentence_case_on(void); // getreuer/sentence_case module
+
 #define GLYPH_ARROW    ((char)0x7F)
 #define GLYPH_APPLE_TL ((char)0x80)
 #define GLYPH_APPLE_TR ((char)0x81)
@@ -437,6 +439,13 @@ static void render_cyber_deck(void) {
     oled_write_P(cw_on ? PSTR("CW")  : PSTR("--"),  false);
     if (ac_on) draw_hline(96, 106, 15);
     if (cw_on) draw_hline(114, 124, 15);
+
+    // Sentence case on/off. It can be toggled by accident (Fn + G) and nothing
+    // else shows its state.
+    oled_set_cursor(16, 2);
+    bool sc_on = is_sentence_case_on();
+    oled_write_P(sc_on ? PSTR("SC") : PSTR("--"), false);
+    if (sc_on) draw_hline(96, 106, 23);
 
     uint8_t mods = get_mods();
     oled_set_cursor(16, 3);
