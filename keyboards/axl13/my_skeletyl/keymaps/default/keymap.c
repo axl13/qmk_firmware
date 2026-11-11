@@ -22,6 +22,8 @@
 
 #include QMK_KEYBOARD_H
 #include <string.h>
+#include "raw_hid.h"
+#include "transactions.h"
 
 #ifdef OS_DETECTION_ENABLE
 #    include "os_detection.h"
@@ -277,9 +279,73 @@ bool apply_autocorrect(uint8_t backspaces, const char *str, char *typo, char *co
 }
 #endif
 
+// ---------------------------------------------------------------------------
+// Agent status lights
+//   Each Pro Micro has two controllable on-board LEDs (active low): B0 and D5.
+//   The Mac sends 'L' + one byte over Raw HID: bits 0-1 = left half A/B,
+//   bits 2-3 = right half A/B. The left half passes the right half's bits on.
+//   If the Mac stops sending, the lights go dark after LIGHTS_TIMEOUT_MS.
+//   For the first 3 s after power-up each half shows A, then B, as a self-test.
+// ---------------------------------------------------------------------------
+#define LIGHT_A B0
+#define LIGHT_B D5
+#define LIGHTS_TIMEOUT_MS 10000
+
+static uint8_t  lights;       // last byte from the Mac
+static uint32_t lights_timer; // when it arrived
+
+static void lights_show(uint8_t two_bits) {
+    gpio_write_pin(LIGHT_A, !(two_bits & 1));
+    gpio_write_pin(LIGHT_B, !(two_bits & 2));
+}
+
+static void lights_slave_handler(uint8_t in_len, const void *in, uint8_t out_len, void *out) {
+    lights_show(*(const uint8_t *)in);
+}
+
+void raw_hid_receive(uint8_t *data, uint8_t length) {
+    if (data[0] == 'L') {
+        lights       = data[1] & 0x0F;
+        lights_timer = timer_read32();
+    }
+}
+
+void housekeeping_task_user(void) {
+    static bool self_test_done = false;
+    if (!self_test_done) {
+        uint32_t up = timer_read32();
+        if (up < 3000) {
+            lights_show(up < 1500 ? 1 : 2);
+            return;
+        }
+        self_test_done = true;
+        lights_show(0);
+    }
+    if (!is_keyboard_master()) return; // the right half is driven by lights_slave_handler
+
+    if (lights && timer_elapsed32(lights_timer) > LIGHTS_TIMEOUT_MS) {
+        lights = 0;
+    }
+    lights_show(lights & 3);
+
+    static uint8_t  sent = 0xFF;
+    static uint16_t last = 0;
+    uint8_t         right = lights >> 2;
+    if (right != sent || timer_elapsed(last) > 1000) { // repeat once a second in case a frame is lost
+        if (transaction_rpc_send(USER_SYNC_LIGHTS, 1, &right)) {
+            sent = right;
+        }
+        last = timer_read();
+    }
+}
+
 void keyboard_post_init_user(void) {
     last_activity_timer = timer_read32();
     wpm_bucket_timer    = timer_read();
+    gpio_set_pin_output(LIGHT_A);
+    gpio_set_pin_output(LIGHT_B);
+    lights_show(0);
+    transaction_register_rpc(USER_SYNC_LIGHTS, lights_slave_handler);
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {

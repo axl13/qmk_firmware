@@ -36,5 +36,10 @@
 #define COMBO_SHOULD_TRIGGER
 #define COMBO_PRIOR_IDLE_MS 150
 
+// --- Agent status lights: one byte from the Mac (Raw HID), right-half bits passed on over the split link ---
+#define SPLIT_TRANSACTION_IDS_USER USER_SYNC_LIGHTS
+#define RPC_M2S_BUFFER_SIZE 2
+#define RPC_S2M_BUFFER_SIZE 2
+
 // --- Sentence case (getreuer/sentence_case) ---
 #define SENTENCE_CASE_TIMEOUT 2000

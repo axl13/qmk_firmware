@@ -9,6 +9,7 @@ COMBO_ENABLE = yes
 EXTRAKEY_ENABLE = yes       # volume, play, brightness on the Function layer
 AUTOCORRECT_ENABLE = yes    # dictionary: autocorrect_dict.txt
 CAPS_WORD_ENABLE = yes      # hold both home-row Shifts (A + ;)
+RAW_ENABLE = yes            # agent status lights: the Mac sets them over Raw HID
 OS_DETECTION_ENABLE = yes   # auto Mac/Linux logo + Ctrl<->GUI swap
 
 # Not used; saves AVR flash
